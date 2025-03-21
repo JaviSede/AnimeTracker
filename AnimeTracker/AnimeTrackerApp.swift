@@ -10,6 +10,10 @@ import SwiftData
 
 @main
 struct AnimeTrackerApp: App {
+    // Create a shared instance of the AnimeService
+    let animeService = AnimeService()
+    @StateObject private var appState = AppState()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +29,8 @@ struct AnimeTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
+                .environmentObject(appState)
         }
         .modelContainer(sharedModelContainer)
     }
