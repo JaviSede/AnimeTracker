@@ -10,7 +10,7 @@ import SwiftUI
 struct AnimeDetailView: View {
     let animeID: Int
     @EnvironmentObject var service: AnimeService
-    @State private var animeDetail: AnimeDetail?
+    @State private var animeDetail: AnimePreview?
     @State private var isLoading = true
     @State private var expandSynopsis = false
     
@@ -45,10 +45,10 @@ struct AnimeDetailView: View {
             .padding()
     }
     
-    private func animeContentView(anime: AnimeDetail) -> some View {
+    private func animeContentView(anime: AnimePreview) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             // Image section
-            animeImageView(imageURL: anime.imageURL)
+            animeImageView(imageURL: anime.images.jpg.large_image_url ?? anime.images.jpg.image_url)
             
             // Title and info section
             titleSection(anime: anime)
@@ -57,7 +57,11 @@ struct AnimeDetailView: View {
             actionButtonsSection()
             
             // Synopsis section
-            synopsisSection(synopsis: anime.synopsis ?? "No synopsis available.")
+            if let synopsis = anime.synopsis {
+                synopsisSection(synopsis: synopsis)
+            } else {
+                synopsisSection(synopsis: "No synopsis available.")
+            }
             
             // Episodes section
             if let episodeCount = anime.episodes {
@@ -67,9 +71,6 @@ struct AnimeDetailView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal)
             }
-            
-            // Note: We're removing the episodesSection call since we don't have episode details
-            // If you want to display episode details, you'll need to fetch them separately
         }
         .padding(.vertical)
     }
@@ -97,7 +98,7 @@ struct AnimeDetailView: View {
         .frame(maxWidth: .infinity, maxHeight: 300)
     }
     
-    private func titleSection(anime: AnimeDetail) -> some View {
+    private func titleSection(anime: AnimePreview) -> some View {
         VStack(alignment: .leading) {
             // Title
             Text(anime.title)
@@ -106,19 +107,47 @@ struct AnimeDetailView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal)
             
+            // Status and type
+            if let status = anime.status {
+                Text(status)
+                    .font(.subheadline)
+                    .foregroundColor(.purple)
+                    .padding(.horizontal)
+            }
+            
             // Genres
-            Text(anime.genres.map { $0.name }.joined(separator: ", "))
-                .font(.subheadline)
-                .foregroundColor(.purple)
+            if let genres = anime.genres, !genres.isEmpty {
+                HStack {
+                    Text("Genres: ")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    
+                    ForEach(genres.prefix(3), id: \.id) { genre in
+                        Text(genre.name)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.purple.opacity(0.2))
+                            .foregroundColor(.purple)
+                            .cornerRadius(4)
+                    }
+                    
+                    if genres.count > 3 {
+                        Text("+\(genres.count - 3)")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
                 .padding(.horizontal)
+            }
             
             // Rating
-            if let rating = anime.rating {
+            if let score = anime.score {
                 HStack {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
                     
-                    Text("\(rating)")
+                    Text(String(format: "%.1f", score))
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }

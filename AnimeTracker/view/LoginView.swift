@@ -65,17 +65,51 @@ struct LoginView: View {
                         appState.login(email: email, password: password)
                     }
                 }) {
-                    Text("Login")
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, minHeight: 50)
-                        .background(Color.purple)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                    if appState.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.purple)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    } else {
+                        Text("Login")
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.purple)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
                 }
                 .padding(.horizontal, 40)
+                .disabled(appState.isLoading)
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                 }
+
+                // Show error message from AppState if present
+                if let errorMessage = appState.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal, 40)
+                }
+
+                // Debug button - only for development
+            
+                Button(action: {
+                    // Force login for debugging
+                    let user = User(id: UUID().uuidString, email: "test@example.com", username: "TestUser")
+                    appState.currentUser = user
+                    appState.isLoggedIn = true
+                    appState.isLoading = false
+                }) {
+                    Text("Debug: Force Login")
+                        .font(.caption)
+                        .foregroundColor(.gray.opacity(0.5))
+                }
+                .padding(.top, 20)
+            
 
                 // Enlaces para crear cuenta y recuperar contraseña
                 HStack {
