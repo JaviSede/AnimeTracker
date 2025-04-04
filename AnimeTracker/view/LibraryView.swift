@@ -288,6 +288,36 @@ struct LibraryView: View {
                                     .frame(width: 100)
                             }
                         }
+                        
+                        // Controles para editar episodios
+                        HStack {
+                            Button(action: {
+                                if anime.currentEpisode > 0 {
+                                    userLibrary.updateAnime(id: anime.id, currentEpisode: anime.currentEpisode - 1)
+                                }
+                            }) {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.gray)
+                            }
+                            .disabled(anime.currentEpisode <= 0)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                let newEpisode = anime.currentEpisode + 1
+                                userLibrary.updateAnime(id: anime.id, currentEpisode: newEpisode)
+                                
+                                // Si llegamos al último episodio, preguntar si quiere marcar como completado
+                                if anime.totalEpisodes > 0 && newEpisode >= anime.totalEpisodes {
+                                    // En una app real, aquí iría un alert o confirmación
+                                    // Por ahora, simplemente actualizamos el estado
+                                    userLibrary.updateAnime(id: anime.id, status: .completed)
+                                }
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundColor(.purple)
+                            }
+                        }
                     }
                 }
                 
@@ -295,6 +325,19 @@ struct LibraryView: View {
                 
                 // Añadir menú de opciones
                 Menu {
+                    // Sección para editar episodios
+                    if anime.status == .watching || anime.status == .onHold {
+                        Button(action: {
+                            // Aquí iría un sheet o modal para editar episodios
+                            // Por simplicidad, incrementamos en 1
+                            userLibrary.updateAnime(id: anime.id, currentEpisode: anime.currentEpisode + 1)
+                        }) {
+                            Label("Update Episode", systemImage: "pencil")
+                        }
+                        
+                        Divider()
+                    }
+                    
                     ForEach(AnimeStatus.allCases.filter { $0 != .all }, id: \.self) { status in
                         Button(action: {
                             userLibrary.updateAnime(id: anime.id, status: status)
@@ -324,6 +367,25 @@ struct LibraryView: View {
             .cornerRadius(12)
         }
         .contextMenu {
+            // Añadir opciones para editar episodios en el menú contextual
+            if anime.status == .watching || anime.status == .onHold {
+                Button(action: {
+                    userLibrary.updateAnime(id: anime.id, currentEpisode: anime.currentEpisode + 1)
+                }) {
+                    Label("Increment Episode", systemImage: "plus.circle")
+                }
+                
+                if anime.currentEpisode > 0 {
+                    Button(action: {
+                        userLibrary.updateAnime(id: anime.id, currentEpisode: anime.currentEpisode - 1)
+                    }) {
+                        Label("Decrement Episode", systemImage: "minus.circle")
+                    }
+                }
+                
+                Divider()
+            }
+            
             ForEach(AnimeStatus.allCases.filter { $0 != .all }, id: \.self) { status in
                 Button(action: {
                     userLibrary.updateAnime(id: anime.id, status: status)

@@ -10,39 +10,53 @@ import SwiftUI
 struct NavigationHome: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var animeService: AnimeService
+    @State private var selectedTab = 0
+    @State private var showingSettings = false
     
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                }
-                .environmentObject(animeService)
-            
-            SearchView()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
-                }
-                .environmentObject(animeService)
-            
-            LibraryView()
-                .tabItem {
-                    Image(systemName: "books.vertical.fill")
-                    Text("Library")
-                }
-            
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                }
-                .environmentObject(appState)
+        ZStack {
+            TabView(selection: $selectedTab) {
+                HomeView(showSettings: $showingSettings, switchToProfileTab: {
+                    selectedTab = 3
+                })
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("Home")
+                    }
+                    .tag(0)
+                    .environmentObject(animeService)
+                
+                SearchView()
+                    .tabItem {
+                        Image(systemName: "magnifyingglass")
+                        Text("Search")
+                    }
+                    .tag(1)
+                    .environmentObject(animeService)
+                
+                LibraryView()
+                    .tabItem {
+                        Image(systemName: "books.vertical.fill")
+                        Text("Library")
+                    }
+                    .tag(2)
+                
+                ProfileView()
+                    .tabItem {
+                        Image(systemName: "person.fill")
+                        Text("Profile")
+                    }
+                    .tag(3)
+                    .environmentObject(appState)
+            }
+            .accentColor(.purple)
+            .toolbarBackground(.black, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
         }
-        .accentColor(.purple)
-        .toolbarBackground(.black, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        // En la parte donde se muestra la hoja de configuración
+        .sheet(isPresented: $showingSettings) {
+        //    SettingsView(isDarkMode: $isDarkMode)
+        }
         .onAppear {
             animeService.loadAllData()
         }
@@ -52,6 +66,9 @@ struct NavigationHome: View {
 struct HomeView: View {
     @EnvironmentObject var animeService: AnimeService
     @EnvironmentObject var userLibrary: UserLibrary
+    @Binding var showSettings: Bool
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    var switchToProfileTab: () -> Void
     
     var body: some View {
         NavigationView {
@@ -94,11 +111,24 @@ struct HomeView: View {
                 .navigationTitle("Home")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {}) {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.purple)
+                        HStack {
+                            Button(action: {
+                                // Mostrar configuración directamente
+                                showSettings = true
+                            }) {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.purple)
+                            }
+                            
+                            Button(action: {
+                                // Navegar a la vista de perfil directamente
+                                switchToProfileTab()
+                            }) {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                            }
                         }
                     }
                 }

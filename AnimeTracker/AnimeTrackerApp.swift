@@ -14,6 +14,8 @@ struct AnimeTrackerApp: App {
     @StateObject private var userLibrary = UserLibrary()
     @StateObject private var authService = AuthService()
     @State private var selectedTab = 0
+    @State private var showingSettings = false
+    @AppStorage("isDarkMode") private var isDarkMode = true
     
     var body: some Scene {
         WindowGroup {
@@ -22,10 +24,13 @@ struct AnimeTrackerApp: App {
                     .environmentObject(animeService)
                     .environmentObject(userLibrary)
                     .environmentObject(authService)
+                    .preferredColorScheme(isDarkMode ? .dark : .light)
             } else {
                 TabView(selection: $selectedTab) {
                     NavigationStack {
-                        HomeView()
+                        HomeView(showSettings: $showingSettings, switchToProfileTab: {
+                            selectedTab = 3
+                        })
                     }
                     .tabItem {
                         Label("Home", systemImage: "house.fill")
@@ -56,10 +61,13 @@ struct AnimeTrackerApp: App {
                     }
                     .tag(3)
                 }
+                .sheet(isPresented: $showingSettings) {
+                    SettingsView(isDarkMode: $isDarkMode)
+                }
                 .environmentObject(animeService)
                 .environmentObject(userLibrary)
                 .environmentObject(authService)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(isDarkMode ? .dark : .light)
                 .onAppear {
                     setupNotifications()
                 }
