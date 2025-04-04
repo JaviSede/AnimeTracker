@@ -10,9 +10,11 @@ import SwiftUI
 struct AnimeDetailView: View {
     let animeID: Int
     @EnvironmentObject var service: AnimeService
+    @EnvironmentObject var userLibrary: UserLibrary
     @State private var animeDetail: AnimePreview?
     @State private var isLoading = true
     @State private var expandSynopsis = false
+    @State private var showingStatusSheet = false
     
     var body: some View {
         ScrollView {
@@ -28,6 +30,12 @@ struct AnimeDetailView: View {
         .background(Color.black.ignoresSafeArea())
         .onAppear {
             loadAnimeDetails()
+        }
+        .sheet(isPresented: $showingStatusSheet) {
+            if let animeDetail = animeDetail {
+                AnimeStatusSelectionView(animeID: animeID, animeDetail: animeDetail)
+                    .environmentObject(userLibrary)
+            }
         }
     }
     
@@ -157,29 +165,58 @@ struct AnimeDetailView: View {
     }
     
     private func actionButtonsSection() -> some View {
-        HStack(spacing: 15) {
+        VStack(spacing: 15) {
+            // Add to library button
             Button(action: {
-                // Action for "Watching"
+                showingStatusSheet = true
             }) {
-                Text("Watching")
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, minHeight: 40)
-                    .background(Color.purple)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                HStack {
+                    Image(systemName: userLibrary.isInLibrary(id: animeID) ? "checkmark.circle.fill" : "plus.circle")
+                    Text(userLibrary.isInLibrary(id: animeID) ? "Update in Library" : "Add to Library")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.purple)
+                .cornerRadius(10)
             }
             
-            Button(action: {
-                // Action for "+ List"
-            }) {
-                Text("+ List")
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, minHeight: 40)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.purple, lineWidth: 2)
-                    )
-                    .foregroundColor(.purple)
+            // Quick action buttons
+            HStack(spacing: 15) {
+                Button(action: {
+                    if let anime = animeDetail {
+                        if userLibrary.isInLibrary(id: animeID) {
+                            userLibrary.updateAnime(id: animeID, status: .watching)
+                        } else {
+                            userLibrary.addAnime(anime: anime, status: .watching)
+                        }
+                    }
+                }) {
+                    Text("Watching")
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(userLibrary.isInLibrary(id: animeID) && userLibrary.getAnimeStatus(id: animeID) == .watching ? Color.purple : Color.gray.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    if let anime = animeDetail {
+                        if userLibrary.isInLibrary(id: animeID) {
+                            userLibrary.updateAnime(id: animeID, status: .planToWatch)
+                        } else {
+                            userLibrary.addAnime(anime: anime, status: .planToWatch)
+                        }
+                    }
+                }) {
+                    Text("Plan to Watch")
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(userLibrary.isInLibrary(id: animeID) && userLibrary.getAnimeStatus(id: animeID) == .planToWatch ? Color.purple : Color.gray.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
         }
         .padding(.horizontal)
@@ -278,6 +315,7 @@ struct AnimeEpisode: Identifiable {
     NavigationStack {
         AnimeDetailView(animeID: 5114)
             .environmentObject(AnimeService())
+            .environmentObject(UserLibrary())
     }
 }
 

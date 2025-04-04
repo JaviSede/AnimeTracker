@@ -127,8 +127,11 @@ class UserLibrary: ObservableObject {
         return savedAnimes.contains { $0.id == id }
     }
     
-    func getAnimeStatus(id: Int) -> AnimeStatus? {
-        return savedAnimes.first(where: { $0.id == id })?.status
+    func getAnimeStatus(id: Int) -> AnimeStatus {
+        if let anime = savedAnimes.first(where: { $0.id == id }) {
+            return anime.status
+        }
+        return .planToWatch
     }
     
     private func saveLibrary() {

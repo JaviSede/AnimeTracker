@@ -51,6 +51,7 @@ struct NavigationHome: View {
 
 struct HomeView: View {
     @EnvironmentObject var animeService: AnimeService
+    @EnvironmentObject var userLibrary: UserLibrary
     
     var body: some View {
         NavigationView {
@@ -109,47 +110,55 @@ struct HomeView: View {
     
     private var currentlyWatchingSection: some View {
         Group {
-            if animeService.isLoading && animeService.currentlyWatchingAnime.isEmpty {
+            if animeService.isLoading && userLibrary.savedAnimes.isEmpty {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .purple))
                     .frame(maxWidth: .infinity)
-            } else if let firstAnime = animeService.currentlyWatchingAnime.first {
-                currentlyWatchingItem(anime: firstAnime)
             } else {
-                Text("No anime in your watching list")
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                let watchingAnimes = userLibrary.savedAnimes.filter { $0.status == .watching }
+                
+                if let firstAnime = watchingAnimes.first {
+                    currentlyWatchingItem(savedAnime: firstAnime)
+                } else {
+                    Text("No anime in your watching list")
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
             }
         }
     }
     
-    private func currentlyWatchingItem(anime: AnimePreview) -> some View {
-        NavigationLink(destination: AnimeDetailView(animeID: anime.mal_id)) {
+    private func currentlyWatchingItem(savedAnime: SavedAnime) -> some View {
+        NavigationLink(destination: AnimeDetailView(animeID: savedAnime.id)) {
             HStack(spacing: 15) {
-                animeImageView(imageURL: anime.images.jpg.image_url, width: 100, height: 150)
+                animeImageView(imageURL: savedAnime.imageUrl, width: 100, height: 150)
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(anime.title)
+                    Text(savedAnime.title)
                         .font(.headline)
                         .foregroundColor(.white)
                         .lineLimit(2)
                     
-                    Text(anime.status ?? "Ongoing")
+                    Text(savedAnime.status.rawValue)
                         .font(.subheadline)
                         .foregroundColor(.purple)
                     
-                    if let episodes = anime.episodes {
-                        Text("Episode 1/\(episodes)")
+                    if savedAnime.totalEpisodes > 0 {
+                        Text("Episode \(savedAnime.currentEpisode)/\(savedAnime.totalEpisodes)")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     } else {
-                        Text("Episodes: Unknown")
+                        Text("Episode \(savedAnime.currentEpisode)/Unknown")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        // Incrementar el episodio actual
+                        let newEpisode = savedAnime.currentEpisode + 1
+                        userLibrary.updateAnime(id: savedAnime.id, currentEpisode: newEpisode)
+                    }) {
                         Text("Continue")
                             .fontWeight(.bold)
                             .frame(width: 100, height: 40)

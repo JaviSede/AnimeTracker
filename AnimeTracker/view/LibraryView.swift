@@ -10,66 +10,121 @@ import SwiftUI
 struct LibraryView: View {
     @EnvironmentObject var animeService: AnimeService
     @EnvironmentObject var userLibrary: UserLibrary
+    // Añadir estas propiedades al inicio de la estructura
     @State private var selectedFilter: AnimeStatus = .all
+    @State private var sortOption: SortOption = .lastUpdated
+    @State private var showingSortMenu = false
+    @State private var sortAscending = false  // Añadida esta propiedad
+    
+    // Definir las opciones de ordenación
+    enum SortOption: String, CaseIterable {
+        case title = "Title"
+        case lastUpdated = "Last Updated"
+        case progress = "Progress"
+        case score = "Score"
+        
+        var icon: String {
+            switch self {
+            case .title: return "textformat.abc"
+            case .lastUpdated: return "clock"
+            case .progress: return "chart.bar.fill"
+            case .score: return "star.fill"
+            }
+        }
+    }
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    // Filter tabs
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            filterButton(for: .all)
-                            filterButton(for: .watching)
-                            filterButton(for: .completed)
-                            filterButton(for: .planToWatch)
-                            filterButton(for: .onHold)
-                            filterButton(for: .dropped)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                    }
-                    
-                    if filteredAnimes.isEmpty {
-                        emptyLibraryView
-                    } else {
-                        // Library content
-                        ScrollView {
-                            LazyVStack(spacing: 16) {
-                                ForEach(filteredAnimes) { anime in
-                                    animeRow(anime: anime)
-                                }
-                            }
-                            .padding()
-                        }
-                    }
-                }
-                .navigationTitle("My Library")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            // Sort options
-                        }) {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .foregroundColor(.purple)
-                        }
-                    }
-                }
-                .onAppear {
-                    // Asegurarse de que los datos se cargan correctamente
-                    if animeService.recommendedAnime.isEmpty {
-                        animeService.fetchRecommendedAnime()
-                    }
-                    
-                    // Cargar también los animes populares
-                    if animeService.popularAnime.isEmpty {
-                        animeService.fetchPopularAnime()
-                    }
+                libraryContent
+            }
+        }
+    }
+    
+    private var libraryContent: some View {
+        VStack(spacing: 0) {
+            filterTabsView
+            
+            if filteredAnimes.isEmpty {
+                emptyLibraryView
+            } else {
+                libraryListView
+            }
+        }
+        .navigationTitle("My Library")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                sortMenuButton
+            }
+        }
+        .onAppear {
+            loadAnimeData()
+        }
+    }
+    
+    private var filterTabsView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 16) {
+                filterButton(for: .all)
+                filterButton(for: .watching)
+                filterButton(for: .completed)
+                filterButton(for: .planToWatch)
+                filterButton(for: .onHold)
+                filterButton(for: .dropped)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+    }
+    
+    private var libraryListView: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(filteredAnimes) { anime in
+                    animeRow(anime: anime)
                 }
             }
+            .padding()
+        }
+    }
+    
+    private var sortMenuButton: some View {
+        Menu {
+            ForEach(SortOption.allCases, id: \.self) { option in
+                Button(action: {
+                    sortOption = option
+                }) {
+                    Label(option.rawValue, systemImage: option.icon)
+                        .foregroundColor(sortOption == option ? .purple : .white)
+                }
+            }
+            
+            Divider()
+            
+            Button(action: {
+                sortAscending.toggle()
+            }) {
+                Label(
+                    sortAscending ? "Ascending" : "Descending",
+                    systemImage: sortAscending ? "arrow.up" : "arrow.down"
+                )
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down")
+                .foregroundColor(.purple)
+        }
+    }
+    
+    private func loadAnimeData() {
+        if animeService.recommendedAnime.isEmpty {
+            animeService.fetchRecommendedAnime()
+        }
+        
+        if animeService.popularAnime.isEmpty {
+            animeService.fetchPopularAnime()
         }
     }
     
@@ -110,10 +165,51 @@ struct LibraryView: View {
     }
     
     private var filteredAnimes: [SavedAnime] {
-        if selectedFilter == .all {
-            return userLibrary.savedAnimes
-        } else {
-            return userLibrary.savedAnimes.filter { $0.status == selectedFilter }
+        let filtered = selectedFilter == .all ?
+        userLibrary.savedAnimes :
+        userLibrary.savedAnimes.filter { $0.status == selectedFilter }
+        
+        // Aplicar ordenación
+        return sortAnimes(filtered)
+    }
+    
+    private func sortAnimes(_ animes: [SavedAnime]) -> [SavedAnime] {
+        switch sortOption {
+        case .title:
+            if sortAscending {
+                return animes.sorted(by: { $0.title < $1.title })
+            } else {
+                return animes.sorted(by: { $0.title > $1.title })
+            }
+            
+        case .lastUpdated:
+            if sortAscending {
+                return animes.sorted(by: { $0.lastUpdated < $1.lastUpdated })
+            } else {
+                return animes.sorted(by: { $0.lastUpdated > $1.lastUpdated })
+            }
+            
+        case .progress:
+            if sortAscending {
+                return animes.sorted(by: { 
+                    let progress1 = $0.totalEpisodes > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes) : 0
+                    let progress2 = $1.totalEpisodes > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes) : 0
+                    return progress1 < progress2
+                })
+            } else {
+                return animes.sorted(by: { 
+                    let progress1 = $0.totalEpisodes > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes) : 0
+                    let progress2 = $1.totalEpisodes > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes) : 0
+                    return progress1 > progress2
+                })
+            }
+            
+        case .score:
+            if sortAscending {
+                return animes.sorted(by: { ($0.score ?? 0) < ($1.score ?? 0) })
+            } else {
+                return animes.sorted(by: { ($0.score ?? 0) > ($1.score ?? 0) })
+            }
         }
     }
     
@@ -130,7 +226,7 @@ struct LibraryView: View {
                 .background(
                     selectedFilter == status ?
                     Color.purple.opacity(0.8) :
-                    Color.gray.opacity(0.2)
+                        Color.gray.opacity(0.2)
                 )
                 .cornerRadius(20)
         }
@@ -197,12 +293,64 @@ struct LibraryView: View {
                 
                 Spacer()
                 
+                // Añadir menú de opciones
+                Menu {
+                    ForEach(AnimeStatus.allCases.filter { $0 != .all }, id: \.self) { status in
+                        Button(action: {
+                            userLibrary.updateAnime(id: anime.id, status: status)
+                        }) {
+                            Label(status.displayName, systemImage: statusIcon(for: status))
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive, action: {
+                        userLibrary.removeAnime(id: anime.id)
+                    }) {
+                        Label("Remove from Library", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(.gray)
+                        .padding(8)
+                }
+                
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
             }
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
+        }
+        .contextMenu {
+            ForEach(AnimeStatus.allCases.filter { $0 != .all }, id: \.self) { status in
+                Button(action: {
+                    userLibrary.updateAnime(id: anime.id, status: status)
+                }) {
+                    Label(status.displayName, systemImage: statusIcon(for: status))
+                }
+            }
+            
+            Divider()
+            
+            Button(role: .destructive, action: {
+                userLibrary.removeAnime(id: anime.id)
+            }) {
+                Label("Remove from Library", systemImage: "trash")
+            }
+        }
+    }
+    
+    // Función auxiliar para obtener el icono correspondiente a cada estado
+    private func statusIcon(for status: AnimeStatus) -> String {
+        switch status {
+        case .watching: return "play.circle"
+        case .completed: return "checkmark.circle"
+        case .planToWatch: return "calendar"
+        case .onHold: return "pause.circle"
+        case .dropped: return "xmark.circle"
+        default: return "circle"
         }
     }
 }

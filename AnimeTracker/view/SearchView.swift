@@ -150,22 +150,21 @@ struct SearchView: View {
                     case .empty:
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
-                            .aspectRatio(3/4, contentMode: .fit)
-                            .frame(height: 200)
+                            .aspectRatio(3/4, contentMode: .fill)
+                            .frame(width: 150, height: 200)
                             .cornerRadius(8)
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(height: 200)
+                            .frame(width: 150, height: 200)
                             .cornerRadius(8)
-                            .scaledToFill()
                             .clipped()
                     case .failure:
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
-                            .aspectRatio(3/4, contentMode: .fit)
-                            .frame(height: 200)
+                            .aspectRatio(3/4, contentMode: .fill)
+                            .frame(width: 150, height: 200)
                             .cornerRadius(8)
                             .overlay(
                                 Image(systemName: "photo")
@@ -175,14 +174,13 @@ struct SearchView: View {
                         EmptyView()
                     }
                 }
-                .frame(height: 200)
                 
                 Text(anime.title)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.white)
                     .lineLimit(2)
-                    .frame(height: 40, alignment: .topLeading)
+                    .frame(width: 150, height: 40, alignment: .topLeading)
                 
                 if let score = anime.score {
                     HStack {
@@ -194,6 +192,7 @@ struct SearchView: View {
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
+                    .frame(width: 150, alignment: .leading)
                 }
             }
             .frame(width: 150)

@@ -23,8 +23,16 @@ class AppState: ObservableObject {
             // For demo purposes, accept any non-empty email/password
             // In a real app, you would validate against a backend
             if email.contains("@") && password.count >= 6 {
-                // Create a user object
-                let user = User(id: UUID().uuidString, email: email, username: email.split(separator: "@").first?.description ?? "user")
+                // Create a user object with the new User model structure
+                let user = User(
+                    id: UUID().uuidString,
+                    username: email.split(separator: "@").first?.description ?? "user",
+                    email: email,
+                    profileImageUrl: nil,
+                    bio: nil,
+                    joinDate: Date(),
+                    animeStats: User.AnimeStats()
+                )
                 self.currentUser = user
                 self.isLoggedIn = true
                 self.isLoading = false  // Make sure loading state is updated
@@ -39,10 +47,34 @@ class AppState: ObservableObject {
         currentUser = nil
         isLoggedIn = false
     }
-}
-
-struct User {
-    let id: String
-    let email: String
-    let username: String
+    
+    func updateUserProfile(username: String, bio: String?) {
+        guard var user = currentUser else { return }
+        
+        user.username = username
+        user.bio = bio
+        
+        self.currentUser = user
+    }
+    
+    // Nuevo método para actualizar la foto de perfil
+    func updateProfileImage(imageUrl: String) {
+        guard var user = currentUser else { return }
+        
+        user.profileImageUrl = imageUrl
+        self.currentUser = user
+    }
+    
+    // Método completo para actualizar el perfil incluyendo la imagen
+    func updateCompleteProfile(username: String, bio: String?, imageUrl: String?) {
+        guard var user = currentUser else { return }
+        
+        user.username = username
+        user.bio = bio
+        if let imageUrl = imageUrl {
+            user.profileImageUrl = imageUrl
+        }
+        
+        self.currentUser = user
+    }
 }
