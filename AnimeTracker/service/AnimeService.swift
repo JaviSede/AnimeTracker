@@ -130,19 +130,35 @@ class AnimeService: ObservableObject {
                 
                 if let error = error {
                     self?.error = error
+                    print("Error fetching anime details: \(error.localizedDescription)")
                     completion(nil)
                     return
                 }
                 
                 guard let data = data else {
+                    print("No data received from API")
                     completion(nil)
                     return
                 }
                 
                 do {
-                    let response = try JSONDecoder().decode(AnimeDetailResponse.self, from: data)
-                    completion(response.data)
+                    // Decodificar la respuesta
+                    let decoder = JSONDecoder()
+                    let response = try decoder.decode(AnimeDetailResponse.self, from: data)
+                    
+                    // Crear una copia mutable del anime
+                    var animeDetail = response.data
+                    
+                    // Añadir servicios de streaming de ejemplo
+                    animeDetail.streaming = [
+                        StreamingService(name: "Netflix", url: "https://www.netflix.com"),
+                        StreamingService(name: "Crunchyroll", url: "https://www.crunchyroll.com"),
+                        StreamingService(name: "Funimation", url: "https://www.funimation.com")
+                    ]
+                    
+                    completion(animeDetail)
                 } catch {
+                    print("Error decoding anime details: \(error.localizedDescription)")
                     self?.error = error
                     completion(nil)
                 }
@@ -190,13 +206,52 @@ struct AnimePreview: Identifiable, Codable {
     let mal_id: Int
     let title: String
     let images: AnimeImages
-    let episodes: Int?
-    let status: String?
-    let score: Double?
     let synopsis: String?
+    let status: String?
+    let episodes: Int?
+    let score: Double?
     let genres: [AnimeGenre]?
+    var streaming: [StreamingService]?
     
-    var id: Int { mal_id }
+    var id: Int {
+        return mal_id
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case mal_id, title, images, synopsis, status, episodes, score, genres
+        // No incluimos 'streaming' aquí porque no está en el JSON
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        mal_id = try container.decode(Int.self, forKey: .mal_id)
+        title = try container.decode(String.self, forKey: .title)
+        images = try container.decode(AnimeImages.self, forKey: .images)
+        synopsis = try container.decodeIfPresent(String.self, forKey: .synopsis)
+        status = try container.decodeIfPresent(String.self, forKey: .status)
+        episodes = try container.decodeIfPresent(Int.self, forKey: .episodes)
+        score = try container.decodeIfPresent(Double.self, forKey: .score)
+        genres = try container.decodeIfPresent([AnimeGenre].self, forKey: .genres)
+        
+        // Inicializamos streaming como nil porque no está en el JSON
+        streaming = nil
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(mal_id, forKey: .mal_id)
+        try container.encode(title, forKey: .title)
+        try container.encode(images, forKey: .images)
+        try container.encodeIfPresent(synopsis, forKey: .synopsis)
+        try container.encodeIfPresent(status, forKey: .status)
+        try container.encodeIfPresent(episodes, forKey: .episodes)
+        try container.encodeIfPresent(score, forKey: .score)
+        try container.encodeIfPresent(genres, forKey: .genres)
+        
+        // No codificamos 'streaming' porque no está en el JSON original
+    }
 }
 
 struct AnimeGenre: Codable, Identifiable {

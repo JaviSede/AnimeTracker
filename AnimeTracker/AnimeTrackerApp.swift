@@ -25,6 +25,12 @@ struct AnimeTrackerApp: App {
                     .environmentObject(userLibrary)
                     .environmentObject(authService)
                     .preferredColorScheme(isDarkMode ? .dark : .light)
+                    .modelContainer(for: [UserModel.self, AnimeStats.self, SavedAnimeModel.self])
+                    .onAppear {
+                        if let modelContext = try? ModelContainer(for: UserModel.self, AnimeStats.self, SavedAnimeModel.self).mainContext {
+                            authService.setModelContext(modelContext)
+                        }
+                    }
             } else {
                 TabView(selection: $selectedTab) {
                     NavigationStack {

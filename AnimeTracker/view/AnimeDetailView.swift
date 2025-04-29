@@ -71,6 +71,11 @@ struct AnimeDetailView: View {
                 synopsisSection(synopsis: "No synopsis available.")
             }
             
+            // Comenta esta sección hasta que tengas la propiedad streaming
+            if let streaming = anime.streaming, !streaming.isEmpty {
+                streamingServicesSection(services: streaming)
+            }
+            
             // Episodes section
             if let episodeCount = anime.episodes {
                 Text("Episodes: \(episodeCount)")
@@ -299,6 +304,56 @@ struct AnimeDetailView: View {
                 self.animeDetail = detail
                 self.isLoading = false
             }
+        }
+    }
+    
+    // MARK: - Streaming Services
+    
+    private func streamingServicesSection(services: [StreamingService]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Where to Watch")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 15) {
+                    ForEach(services, id: \.name) { service in
+                        Link(destination: URL(string: service.url) ?? URL(string: "https://example.com")!) {
+                            VStack {
+                                Text(service.name)
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.purple)
+                                    .cornerRadius(8)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+    
+    private func serviceIcon(for serviceName: String) -> String {
+        switch serviceName.lowercased() {
+        case "netflix":
+            return "netflix_icon"
+        case "crunchyroll":
+            return "crunchyroll_icon"
+        case "amazon prime":
+            return "amazon_icon"
+        case "hulu":
+            return "hulu_icon"
+        case "disney+":
+            return "disney_icon"
+        case "funimation":
+            return "funimation_icon"
+        default:
+            return "streaming_icon" // Icono genérico
         }
     }
 }

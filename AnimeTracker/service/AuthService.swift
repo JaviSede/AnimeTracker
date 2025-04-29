@@ -7,125 +7,171 @@
 
 import Foundation
 import SwiftUI
-import Combine
+import SwiftData
 
 class AuthService: ObservableObject {
-    @Published var currentUser: User?
+    @Published var currentUser: UserModel?
     @Published var isAuthenticated = false
     @Published var isLoading = false
     @Published var error: String?
     
-    private let userDefaults = UserDefaults.standard
-    private let currentUserKey = "currentUser"
+    private var modelContext: ModelContext?
     
-    init() {
-        loadUser()
+    init(modelContext: ModelContext? = nil) {
+        self.modelContext = modelContext
+        checkSavedUser()
     }
     
-    private func loadUser() {
-        if let userData = userDefaults.data(forKey: currentUserKey),
-           let user = try? JSONDecoder().decode(User.self, from: userData) {
-            self.currentUser = user
-            self.isAuthenticated = true
+    func setModelContext(_ context: ModelContext) {
+        self.modelContext = context
+    }
+    
+    private func checkSavedUser() {
+        // Verificar si hay un usuario guardado en UserDefaults
+        if let userData = UserDefaults.standard.data(forKey: "currentUser"),
+           let userId = try? JSONDecoder().decode(String.self, from: userData) {
+            fetchUser(id: userId)
         }
     }
     
     func login(email: String, password: String) {
+        guard let modelContext = modelContext else {
+            self.error = "Error de base de datos"
+            return
+        }
+        
         isLoading = true
         error = nil
         
-        // Simulación de login - En una app real, esto sería una llamada a API
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            // Simulamos un login exitoso
-            if email == "test@example.com" && password == "password" {
-                let user = User(
-                    id: UUID().uuidString,
-                    username: "AnimeUser",
-                    email: email,
-                    profileImageUrl: nil,
-                    bio: "Anime enthusiast",
-                    joinDate: Date(),
-                    animeStats: User.AnimeStats()
-                )
-                
+        // Buscar usuario por email
+        let predicate = #Predicate<UserModel> { user in
+            user.email == email
+        }
+        
+        do {
+            let users = try modelContext.fetch(FetchDescriptor<UserModel>(predicate: predicate))
+            
+            if let user = users.first, user.password == password {
                 self.currentUser = user
                 self.isAuthenticated = true
                 
-                // Guardar usuario en UserDefaults
-                if let encoded = try? JSONEncoder().encode(user) {
-                    self.userDefaults.set(encoded, forKey: self.currentUserKey)
+                // Guardar ID de usuario en UserDefaults
+                if let encoded = try? JSONEncoder().encode(user.id) {
+                    UserDefaults.standard.set(encoded, forKey: "currentUser")
                 }
             } else {
-                self.error = "Invalid email or password"
+                self.error = "Email o contraseña incorrectos"
             }
-            
-            self.isLoading = false
+        } catch {
+            self.error = "Error al iniciar sesión: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
     
     func register(username: String, email: String, password: String) {
+        guard let modelContext = modelContext else {
+            self.error = "Error de base de datos"
+            return
+        }
+        
         isLoading = true
         error = nil
         
-        // Simulación de registro - En una app real, esto sería una llamada a API
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            // Simulamos un registro exitoso
-            let user = User(
-                id: UUID().uuidString,
-                username: username,
-                email: email,
-                profileImageUrl: nil,
-                bio: nil,
-                joinDate: Date(),
-                animeStats: User.AnimeStats()
-            )
+        // Verificar si el email ya existe
+        let predicate = #Predicate<UserModel> { user in
+            user.email == email
+        }
+        
+        do {
+            let existingUsers = try modelContext.fetch(FetchDescriptor<UserModel>(predicate: predicate))
             
-            self.currentUser = user
-            self.isAuthenticated = true
-            
-            // Guardar usuario en UserDefaults
-            if let encoded = try? JSONEncoder().encode(user) {
-                self.userDefaults.set(encoded, forKey: self.currentUserKey)
+            if !existingUsers.isEmpty {
+                self.error = "El email ya está registrado"
+                isLoading = false
+                return
             }
             
-            self.isLoading = false
+            // Crear nuevo usuario
+            let newUser = UserModel(
+                username: username,
+                email: email,
+                password: password
+            )
+            
+            // Crear estadísticas para el usuario
+            let stats = AnimeStats()
+            stats.user = newUser
+            newUser.stats = stats
+            
+            // Guardar en la base de datos
+            modelContext.insert(newUser)
+            try modelContext.save()
+            
+            // Iniciar sesión automáticamente
+            self.currentUser = newUser
+            self.isAuthenticated = true
+            
+            // Guardar ID de usuario en UserDefaults
+            if let encoded = try? JSONEncoder().encode(newUser.id) {
+                UserDefaults.standard.set(encoded, forKey: "currentUser")
+            }
+        } catch {
+            self.error = "Error al registrar: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
     
     func logout() {
         currentUser = nil
         isAuthenticated = false
-        userDefaults.removeObject(forKey: currentUserKey)
+        UserDefaults.standard.removeObject(forKey: "currentUser")
     }
     
     func updateProfile(username: String, bio: String, profileImage: UIImage?) {
-        guard var user = currentUser else { return }
+        guard let modelContext = modelContext, let user = currentUser else {
+            self.error = "Usuario no encontrado"
+            return
+        }
         
+        isLoading = true
+        
+        // Actualizar datos del usuario
         user.username = username
         user.bio = bio
         
-        // En una app real, aquí subirías la imagen a un servidor
-        // y actualizarías la URL de la imagen de perfil
+        // Aquí iría la lógica para subir la imagen a un servidor
+        // y obtener la URL para guardarla en profileImageUrl
         
-        self.currentUser = user
-        
-        // Guardar usuario actualizado en UserDefaults
-        if let encoded = try? JSONEncoder().encode(user) {
-            self.userDefaults.set(encoded, forKey: self.currentUserKey)
+        do {
+            try modelContext.save()
+        } catch {
+            self.error = "Error al actualizar perfil: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
     
-    func updateAnimeStats() {
-        guard var user = currentUser else { return }
+    private func fetchUser(id: String) {
+        guard let modelContext = modelContext else {
+            self.error = "Error de base de datos"
+            return
+        }
         
-        // Actualizar estadísticas basadas en la biblioteca del usuario
-        // Esto se conectaría con tu UserLibrary
+        let predicate = #Predicate<UserModel> { user in
+            user.id == id
+        }
         
-        self.currentUser = user
-        
-        // Guardar usuario actualizado en UserDefaults
-        if let encoded = try? JSONEncoder().encode(user) {
-            self.userDefaults.set(encoded, forKey: self.currentUserKey)
+        do {
+            let users = try modelContext.fetch(FetchDescriptor<UserModel>(predicate: predicate))
+            
+            if let user = users.first {
+                self.currentUser = user
+                self.isAuthenticated = true
+            }
+        } catch {
+            print("Error al recuperar usuario: \(error.localizedDescription)")
         }
     }
 }
