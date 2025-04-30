@@ -105,14 +105,14 @@ struct LoginView: View {
                     // Debug button - only for development
                     Button(action: {
                         // Force login for debugging
-                        let user = User(
+                        let user = UserModel(
                             id: UUID().uuidString,
                             username: "TestUser",
                             email: "test@example.com",
+                            password: "hashedpassword", // Required parameter
                             profileImageUrl: nil,
                             bio: "Test bio",
-                            joinDate: Date(),
-                            animeStats: User.AnimeStats()
+                            joinDate: Date()
                         )
                         authService.currentUser = user
                         authService.isAuthenticated = true

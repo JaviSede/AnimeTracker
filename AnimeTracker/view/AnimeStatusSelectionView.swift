@@ -209,12 +209,12 @@ struct AnimeStatusSelectionView: View {
                 }
             }
             .onAppear {
-                // Si el anime ya está en la biblioteca, cargar sus datos actuales
-                if let savedAnime = userLibrary.savedAnimes.first(where: { $0.id == animeID }) {
-                    selectedStatus = savedAnime.status
-                    currentEpisode = savedAnime.currentEpisode
-                    score = savedAnime.score ?? 0
-                    notes = savedAnime.notes
+                // Si el anime ya está en la biblioteca, cargar sus datos actuales 
+                if let savedAnime = userLibrary.getSavedAnime(id: animeID) {
+                    selectedStatus = savedAnime.status 
+                    currentEpisode = savedAnime.currentEpisode 
+                    score = Double(savedAnime.score ?? 0) 
+                    notes = savedAnime.notes! 
                 }
             }
         }

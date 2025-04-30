@@ -10,51 +10,44 @@ import SwiftData
 
 @Model
 final class UserModel {
-    var id: String
+    @Attribute(.unique) var id: String
     var username: String
     var email: String
+    var password: String // Store hashed password, as done in AuthRepository
     var profileImageUrl: String?
     var bio: String?
     var joinDate: Date
-    var password: String // En producción, deberías usar métodos más seguros
-    
-    // Relaciones
-    @Relationship(.cascade, inverse: \AnimeStats.user)
+
+    // Relationship to AnimeStats (one-to-one)
+    // Cascade delete means if UserModel is deleted, associated AnimeStats is also deleted.
+    // Inverse path updated to point to 'owningUser' in AnimeStats
+    @Relationship(deleteRule: .cascade, inverse: \AnimeStats.owningUser)
     var stats: AnimeStats?
-    
-    @Relationship(.cascade, inverse: \SavedAnimeModel.user)
-    var savedAnimes: [SavedAnimeModel] = []
-    
-    init(id: String = UUID().uuidString, 
-         username: String, 
-         email: String, 
-         profileImageUrl: String? = nil, 
-         bio: String? = nil, 
-         password: String) {
+
+    // Relationship to SavedAnimeModel (one-to-many)
+    // Cascade delete means if UserModel is deleted, all their SavedAnimeModel entries are also deleted.
+    // Made the array non-optional and updated inverse path.
+    @Relationship(deleteRule: .cascade, inverse: \SavedAnimeModel.user)
+    var savedAnimes: [SavedAnimeModel] = [] // Changed to non-optional array
+
+    init(id: String = UUID().uuidString,
+         username: String,
+         email: String,
+         password: String, // Hashed password
+         profileImageUrl: String? = nil,
+         bio: String? = nil,
+         joinDate: Date = Date(),
+         stats: AnimeStats? = nil, // Allow initializing with stats
+         savedAnimes: [SavedAnimeModel] = []) // Default to empty array
+    {
         self.id = id
         self.username = username
         self.email = email
+        self.password = password // Store the hashed password
         self.profileImageUrl = profileImageUrl
         self.bio = bio
-        self.joinDate = Date()
-        self.password = password
-        self.savedAnimes = []
+        self.joinDate = joinDate
+        self.stats = stats
+        self.savedAnimes = savedAnimes
     }
-}
-
-@Model
-final class AnimeStats {
-    var totalAnime: Int = 0
-    var watching: Int = 0
-    var completed: Int = 0
-    var planToWatch: Int = 0
-    var onHold: Int = 0
-    var dropped: Int = 0
-    var totalEpisodes: Int = 0
-    var daysWatched: Double = 0.0
-    
-    @Relationship(inverse: \UserModel.stats)
-    var user: UserModel?
-    
-    init() {}
 }

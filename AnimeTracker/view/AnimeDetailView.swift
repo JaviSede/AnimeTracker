@@ -370,7 +370,7 @@ struct AnimeEpisode: Identifiable {
     NavigationStack {
         AnimeDetailView(animeID: 5114)
             .environmentObject(AnimeService())
-            .environmentObject(UserLibrary())
+            .environmentObject(UserLibrary(authService: AuthService()))
     }
 }
 

@@ -10,80 +10,20 @@ import SwiftData
 
 @main
 struct AnimeTrackerApp: App {
-    @StateObject private var animeService = AnimeService()
-    @StateObject private var userLibrary = UserLibrary()
-    @StateObject private var authService = AuthService()
-    @State private var selectedTab = 0
-    @State private var showingSettings = false
-    @AppStorage("isDarkMode") private var isDarkMode = true
-    
+    // Removed StateObject initializations here as they are now managed within ContentView
+    // or passed down via environment objects initialized there.
+
     var body: some Scene {
         WindowGroup {
-            if !authService.isAuthenticated {
-                LoginView()
-                    .environmentObject(animeService)
-                    .environmentObject(userLibrary)
-                    .environmentObject(authService)
-                    .preferredColorScheme(isDarkMode ? .dark : .light)
-                    .modelContainer(for: [UserModel.self, AnimeStats.self, SavedAnimeModel.self])
-                    .onAppear {
-                        if let modelContext = try? ModelContainer(for: UserModel.self, AnimeStats.self, SavedAnimeModel.self).mainContext {
-                            authService.setModelContext(modelContext)
-                        }
-                    }
-            } else {
-                TabView(selection: $selectedTab) {
-                    NavigationStack {
-                        HomeView(showSettings: $showingSettings, switchToProfileTab: {
-                            selectedTab = 3
-                        })
-                    }
-                    .tabItem {
-                        Label("Home", systemImage: "house.fill")
-                    }
-                    .tag(0)
-                    
-                    NavigationStack {
-                        SearchView()
-                    }
-                    .tabItem {
-                        Label("Search", systemImage: "magnifyingglass")
-                    }
-                    .tag(1)
-                    
-                    NavigationStack {
-                        LibraryView()
-                    }
-                    .tabItem {
-                        Label("Library", systemImage: "books.vertical.fill")
-                    }
-                    .tag(2)
-                    
-                    NavigationStack {
-                        ProfileView()
-                    }
-                    .tabItem {
-                        Label("Profile", systemImage: "person.fill")
-                    }
-                    .tag(3)
-                }
-                .sheet(isPresented: $showingSettings) {
-                    SettingsView(isDarkMode: $isDarkMode)
-                }
-                .environmentObject(animeService)
-                .environmentObject(userLibrary)
-                .environmentObject(authService)
-                .preferredColorScheme(isDarkMode ? .dark : .light)
-                .onAppear {
-                    setupNotifications()
-                }
-            }
+            // Use the new ContentView as the root view of the application.
+            // ContentView will handle setting up the model container, environment objects,
+            // and determining whether to show LoginView or MainTabView based on auth state.
+            ContentView()
+            // The .modelContainer modifier is now applied within ContentView,
+            // ensuring proper context injection and handling.
         }
     }
     
-    private func setupNotifications() {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("SwitchToSearchTab"), object: nil, queue: .main) { _ in
-            selectedTab = 1
-        }
-    }
+    // Removed setupNotifications() as it's now handled within MainTabView
 }
+

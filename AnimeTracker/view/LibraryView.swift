@@ -164,16 +164,16 @@ struct LibraryView: View {
         }
     }
     
-    private var filteredAnimes: [SavedAnime] {
+    private var filteredAnimes: [SavedAnimeModel] {
         let filtered = selectedFilter == .all ?
-        userLibrary.savedAnimes :
-        userLibrary.savedAnimes.filter { $0.status == selectedFilter }
+        userLibrary.fetchSavedAnimes() :
+        userLibrary.fetchSavedAnimes().filter { $0.status == selectedFilter }
         
         // Aplicar ordenación
         return sortAnimes(filtered)
     }
     
-    private func sortAnimes(_ animes: [SavedAnime]) -> [SavedAnime] {
+    private func sortAnimes(_ animes: [SavedAnimeModel]) -> [SavedAnimeModel] {
         switch sortOption {
         case .title:
             if sortAscending {
@@ -192,14 +192,14 @@ struct LibraryView: View {
         case .progress:
             if sortAscending {
                 return animes.sorted(by: { 
-                    let progress1 = $0.totalEpisodes > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes) : 0
-                    let progress2 = $1.totalEpisodes > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes) : 0
+                    let progress1 = ($0.totalEpisodes ?? 0) > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes ?? 1) : 0
+                    let progress2 = ($1.totalEpisodes ?? 0) > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes ?? 1) : 0
                     return progress1 < progress2
                 })
             } else {
                 return animes.sorted(by: { 
-                    let progress1 = $0.totalEpisodes > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes) : 0
-                    let progress2 = $1.totalEpisodes > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes) : 0
+                    let progress1 = ($0.totalEpisodes ?? 0) > 0 ? Double($0.currentEpisode) / Double($0.totalEpisodes ?? 1) : 0
+                    let progress2 = ($1.totalEpisodes ?? 0) > 0 ? Double($1.currentEpisode) / Double($1.totalEpisodes ?? 1) : 0
                     return progress1 > progress2
                 })
             }
@@ -232,11 +232,11 @@ struct LibraryView: View {
         }
     }
     
-    private func animeRow(anime: SavedAnime) -> some View {
+    private func animeRow(anime: SavedAnimeModel) -> some View {
         NavigationLink(destination: AnimeDetailView(animeID: anime.id)) {
             HStack(spacing: 16) {
                 // Anime image
-                AsyncImage(url: URL(string: anime.imageUrl)) { phase in
+                AsyncImage(url: URL(string: anime.imageUrl!)) { phase in
                     switch phase {
                     case .empty:
                         Rectangle()
@@ -276,14 +276,14 @@ struct LibraryView: View {
                     
                     if anime.status == .watching {
                         HStack {
-                            Text("Episode \(anime.currentEpisode)/\(anime.totalEpisodes > 0 ? String(anime.totalEpisodes) : "?")")
+                            Text("Episode \(anime.currentEpisode)/\(anime.totalEpisodes != nil && anime.totalEpisodes! > 0 ? String(anime.totalEpisodes!) : "?")")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
                             Spacer()
                             
-                            if anime.totalEpisodes > 0 {
-                                ProgressView(value: Double(anime.currentEpisode), total: Double(anime.totalEpisodes))
+                            if let totalEpisodes = anime.totalEpisodes, totalEpisodes > 0 {
+                                ProgressView(value: Double(anime.currentEpisode), total: Double(totalEpisodes))
                                     .progressViewStyle(LinearProgressViewStyle(tint: .purple))
                                     .frame(width: 100)
                             }
@@ -308,7 +308,7 @@ struct LibraryView: View {
                                 userLibrary.updateAnime(id: anime.id, currentEpisode: newEpisode)
                                 
                                 // Si llegamos al último episodio, preguntar si quiere marcar como completado
-                                if anime.totalEpisodes > 0 && newEpisode >= anime.totalEpisodes {
+                                if let totalEpisodes = anime.totalEpisodes, totalEpisodes > 0 && newEpisode >= totalEpisodes {
                                     // En una app real, aquí iría un alert o confirmación
                                     // Por ahora, simplemente actualizamos el estado
                                     userLibrary.updateAnime(id: anime.id, status: .completed)
@@ -420,7 +420,7 @@ struct LibraryView: View {
 struct LibraryView_Previews: PreviewProvider {
     static var previews: some View {
         LibraryView()
-            .environmentObject(UserLibrary())
+            .environmentObject(UserLibrary(authService: AuthService()))
             .environmentObject(AnimeService())
             .preferredColorScheme(.dark)
     }

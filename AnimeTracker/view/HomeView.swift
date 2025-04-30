@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct NavigationHome: View {
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var authService: AuthService
     @EnvironmentObject var animeService: AnimeService
+    @EnvironmentObject var userLibrary: UserLibrary
     @State private var selectedTab = 0
     @State private var showingSettings = false
     
@@ -47,7 +48,8 @@ struct NavigationHome: View {
                         Text("Profile")
                     }
                     .tag(3)
-                    .environmentObject(appState)
+                    // Remove or replace the environmentObject modifier
+                    // .environmentObject(appState)
             }
             .accentColor(.purple)
             .toolbarBackground(.black, for: .tabBar)
@@ -140,12 +142,12 @@ struct HomeView: View {
     
     private var currentlyWatchingSection: some View {
         Group {
-            if animeService.isLoading && userLibrary.savedAnimes.isEmpty {
+            if animeService.isLoading && userLibrary.fetchSavedAnimes().isEmpty {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .purple))
                     .frame(maxWidth: .infinity)
             } else {
-                let watchingAnimes = userLibrary.savedAnimes.filter { $0.status == .watching }
+                let watchingAnimes = userLibrary.fetchSavedAnimes().filter { $0.status == .watching }
                 
                 if let firstAnime = watchingAnimes.first {
                     currentlyWatchingItem(savedAnime: firstAnime)
@@ -159,10 +161,10 @@ struct HomeView: View {
         }
     }
     
-    private func currentlyWatchingItem(savedAnime: SavedAnime) -> some View {
+    private func currentlyWatchingItem(savedAnime: SavedAnimeModel) -> some View {
         NavigationLink(destination: AnimeDetailView(animeID: savedAnime.id)) {
             HStack(spacing: 15) {
-                animeImageView(imageURL: savedAnime.imageUrl, width: 100, height: 150)
+                animeImageView(imageURL: savedAnime.imageUrl ?? "", width: 100, height: 150)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(savedAnime.title)
@@ -174,8 +176,8 @@ struct HomeView: View {
                         .font(.subheadline)
                         .foregroundColor(.purple)
                     
-                    if savedAnime.totalEpisodes > 0 {
-                        Text("Episode \(savedAnime.currentEpisode)/\(savedAnime.totalEpisodes)")
+                    if let totalEpisodes = savedAnime.totalEpisodes, totalEpisodes > 0 {
+                        Text("Episode \(savedAnime.currentEpisode)/\(totalEpisodes)")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     } else {
@@ -287,7 +289,7 @@ struct HomeView: View {
 
 #Preview {
     NavigationHome()
-        .environmentObject(AppState())
+        .environmentObject(AuthService())
         .environmentObject(AnimeService())
-        .environmentObject(UserLibrary())
+        .environmentObject(UserLibrary(authService: AuthService()))
 }
