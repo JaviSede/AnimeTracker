@@ -55,4 +55,3 @@ final class SavedAnimeModel {
         self.user = user
     }
 }
-

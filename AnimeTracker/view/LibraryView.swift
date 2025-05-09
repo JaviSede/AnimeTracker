@@ -10,11 +10,14 @@ import SwiftUI
 struct LibraryView: View {
     @EnvironmentObject var animeService: AnimeService
     @EnvironmentObject var userLibrary: UserLibrary
+    @AppStorage("isDarkMode") private var isDarkMode = true
     // Añadir estas propiedades al inicio de la estructura
     @State private var selectedFilter: AnimeStatus = .all
     @State private var sortOption: SortOption = .lastUpdated
     @State private var showingSortMenu = false
-    @State private var sortAscending = false  // Añadida esta propiedad
+    @State private var sortAscending = false  // Añadir esta línea
+    @State private var showingSettings = false  // Add this line to declare the state variable
+
     
     // Definir las opciones de ordenación
     enum SortOption: String, CaseIterable {
@@ -36,7 +39,8 @@ struct LibraryView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color(isDarkMode ? .black : .white)
+                    .ignoresSafeArea()
                 
                 libraryContent
             }
@@ -57,11 +61,23 @@ struct LibraryView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                sortMenuButton
+                HStack {
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                            .foregroundColor(.purple)
+                    }
+                    
+                    sortMenuButton
+                }
             }
         }
         .onAppear {
             loadAnimeData()
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(isDarkMode: $isDarkMode)
         }
     }
     
@@ -134,16 +150,22 @@ struct LibraryView: View {
             
             Image(systemName: "books.vertical")
                 .font(.system(size: 60))
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .gray.opacity(0.7))
+                .padding()
+                .background(
+                    Circle()
+                        .fill(isDarkMode ? Color.gray.opacity(0.2) : Color.purple.opacity(0.1))
+                        .frame(width: 120, height: 120)
+                )
             
-            Text("Your library is empty")
+            Text("Tu biblioteca está vacía")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
             
-            Text("Add anime from the search tab to start building your collection")
+            Text("Añade anime desde la pestaña de búsqueda para comenzar a construir tu colección")
                 .font(.body)
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             
@@ -151,17 +173,35 @@ struct LibraryView: View {
                 NotificationCenter.default.post(name: NSNotification.Name("SwitchToSearchTab"), object: nil)
                 print("Button pressed, notification sent")
             } label: {
-                Text("Discover Anime")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.purple)
-                    .cornerRadius(10)
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .font(.headline)
+                    Text("Descubrir Anime")
+                        .font(.headline)
+                }
+                .foregroundColor(.white)
+                .padding()
+                .frame(width: 200)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(10)
+                .shadow(color: Color.purple.opacity(0.3), radius: 5, x: 0, y: 3)
             }
             .padding(.top, 20)
             
             Spacer()
         }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(isDarkMode ? Color.black.opacity(0.3) : Color.white.opacity(0.7))
+                .padding()
+        )
     }
     
     private var filteredAnimes: [SavedAnimeModel] {
@@ -257,7 +297,7 @@ struct LibraryView: View {
                             .cornerRadius(8)
                             .overlay(
                                 Image(systemName: "photo")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isDarkMode ? .white : .gray)
                             )
                     @unknown default:
                         EmptyView()
@@ -267,7 +307,7 @@ struct LibraryView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(anime.title)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(isDarkMode ? .white : .black)
                         .lineLimit(2)
                     
                     Text(anime.status.displayName)
@@ -278,7 +318,7 @@ struct LibraryView: View {
                         HStack {
                             Text("Episode \(anime.currentEpisode)/\(anime.totalEpisodes != nil && anime.totalEpisodes! > 0 ? String(anime.totalEpisodes!) : "?")")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(isDarkMode ? .gray : .secondary)
                             
                             Spacer()
                             
@@ -363,7 +403,7 @@ struct LibraryView: View {
                     .foregroundColor(.gray)
             }
             .padding()
-            .background(Color.gray.opacity(0.1))
+            .background(isDarkMode ? Color.gray.opacity(0.1) : Color.gray.opacity(0.05))
             .cornerRadius(12)
         }
         .contextMenu {

@@ -12,6 +12,7 @@ import PhotosUI // Needed for PhotosPicker
 struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var authService: AuthService
+    @AppStorage("isDarkMode") private var isDarkMode = true
     
     // State variables bound to UI controls
     @State private var username: String = ""
@@ -30,8 +31,10 @@ struct EditProfileView: View {
         NavigationStack {
             ZStack {
                 // Consistent background
-                LinearGradient(gradient: Gradient(colors: [Color.purple.opacity(0.3), Color.black]),
-                               startPoint: .top, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [
+                    isDarkMode ? Color.purple.opacity(0.3) : Color.purple.opacity(0.1),
+                    isDarkMode ? Color.black : Color.white
+                ]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -47,7 +50,7 @@ struct EditProfileView: View {
                             
                             // PhotosPicker to select a new image
                             PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
-                                Text("Change Photo")
+                                Text("Cambiar Foto")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundColor(.purple)
@@ -74,11 +77,11 @@ struct EditProfileView: View {
                         // --- Form Fields Section ---
                         VStack(spacing: 15) {
                             // Username TextField
-                            TextField("Username", text: $username)
+                            TextField("Nombre de usuario", text: $username)
                                 .padding()
-                                .background(Color.black.opacity(0.3))
+                                .background(isDarkMode ? Color.black.opacity(0.3) : Color.gray.opacity(0.1))
                                 .cornerRadius(10)
-                                .foregroundColor(.white)
+                                .foregroundColor(isDarkMode ? .white : .black)
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5)))
                             
                             // Bio TextEditor
@@ -86,14 +89,14 @@ struct EditProfileView: View {
                                 TextEditor(text: $bio)
                                     .frame(height: 150)
                                     .padding(4)
-                                    .background(Color.black.opacity(0.3))
+                                    .background(isDarkMode ? Color.black.opacity(0.3) : Color.gray.opacity(0.1))
                                     .cornerRadius(10)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isDarkMode ? .white : .black)
                                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5)))
                                 
                                 // Placeholder for TextEditor
                                 if bio.isEmpty {
-                                    Text("Tell us about yourself...")
+                                    Text("Cuéntanos sobre ti...")
                                         .foregroundColor(.gray)
                                         .padding(.leading, 8)
                                         .padding(.top, 12)
@@ -120,7 +123,7 @@ struct EditProfileView: View {
                                 } else {
                                     Image(systemName: "checkmark.circle.fill")
                                 }
-                                Text(isSaving ? "Saving..." : "Save Changes")
+                                Text(isSaving ? "Guardando..." : "Guardar Cambios")
                             }
                             .font(.headline)
                             .foregroundColor(.white)
@@ -138,15 +141,15 @@ struct EditProfileView: View {
                     .padding(.bottom, 30)
                 }
             }
-            .navigationTitle("Edit Profile")
+            .navigationTitle("Editar Perfil")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbarBackground(Color.black.opacity(0.5), for: .navigationBar)
+            .toolbarColorScheme(isDarkMode ? .dark : .light, for: .navigationBar)
+            .toolbarBackground(isDarkMode ? Color.black.opacity(0.5) : Color.white.opacity(0.5), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 // Cancel Button
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("Cancelar") {
                         dismiss()
                     }
                     .foregroundColor(.purple)
@@ -187,9 +190,9 @@ struct EditProfileView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 65, height: 65)
-            .foregroundColor(.white.opacity(0.7))
+            .foregroundColor(isDarkMode ? .white.opacity(0.7) : .gray.opacity(0.7))
             .padding(32.5)
-            .background(Color.gray.opacity(0.3))
+            .background(isDarkMode ? Color.gray.opacity(0.3) : Color.gray.opacity(0.1))
     }
     
     // Load user data into state variables

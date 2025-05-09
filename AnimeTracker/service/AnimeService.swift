@@ -202,7 +202,11 @@ struct AnimeResponse: Codable {
     let data: [AnimePreview]
 }
 
-struct AnimePreview: Identifiable, Codable {
+struct AnimeDetailResponse: Codable {
+    let data: AnimePreview
+}
+
+struct AnimePreview: Identifiable, Codable, Equatable {
     let mal_id: Int
     let title: String
     let images: AnimeImages
@@ -254,25 +258,26 @@ struct AnimePreview: Identifiable, Codable {
     }
 }
 
-struct AnimeGenre: Codable, Identifiable {
+struct AnimeGenre: Codable, Identifiable, Equatable {
     let mal_id: Int
     let name: String
     
     var id: Int { mal_id }
 }
 
-struct AnimeImages: Codable {
+struct AnimeImages: Codable, Equatable {
     let jpg: AnimeImage
     let webp: AnimeImage
 }
 
-struct AnimeImage: Codable {
+struct AnimeImage: Codable, Equatable {
     let image_url: String
     let small_image_url: String?
     let large_image_url: String?
 }
 
-// Estructura para la respuesta de detalles de anime
-struct AnimeDetailResponse: Codable {
-    let data: AnimePreview
+// Also add this struct definition
+struct StreamingService: Codable, Equatable {
+    let name: String
+    let url: String
 }

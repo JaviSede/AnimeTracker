@@ -9,15 +9,17 @@ import SwiftUI
 
 struct SearchView: View {
     @EnvironmentObject var animeService: AnimeService
+    @AppStorage("isDarkMode") private var isDarkMode = true
     @State private var searchText = ""
     @State private var searchResults: [AnimePreview] = []
     @State private var isSearching = false
     @State private var selectedAnime: Int? = nil
     
     var body: some View {
-        NavigationStack {
+        NavigationStack {  // Añadir NavigationStack aquí
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color(isDarkMode ? .black : .white)
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 16) {
                     // Search bar
@@ -26,7 +28,7 @@ struct SearchView: View {
                             .foregroundColor(.gray)
                         
                         TextField("Search anime...", text: $searchText)
-                            .foregroundColor(.white)
+                            .foregroundColor(isDarkMode ? .white : .black)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .onChange(of: searchText) { newValue in
@@ -70,7 +72,7 @@ struct SearchView: View {
                                 Text("Popular Anime")
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isDarkMode ? .white : .black)
                                     .padding(.horizontal)
                                     .padding(.top, 8)
                                 
@@ -96,7 +98,7 @@ struct SearchView: View {
                                 Text("Search Results")
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isDarkMode ? .white : .black)
                                     .padding(.horizontal)
                                     .padding(.top, 8)
                                 
@@ -117,27 +119,20 @@ struct SearchView: View {
                         }
                     }
                 }
-                .navigationTitle("Search")
-                .navigationBarTitleDisplayMode(.large)
                 .navigationDestination(for: Int.self) { animeID in
                     AnimeDetailView(animeID: animeID)
                 }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            // Action for profile or settings
-                        }) {
-                            Image(systemName: "person.circle")
-                                .foregroundColor(.purple)
-                        }
-                    }
-                }
             }
-            .onAppear {
-                // Cargar datos populares si están vacíos
-                if animeService.popularAnime.isEmpty {
-                    animeService.fetchPopularAnime()
-                }
+            .navigationTitle("Search")  // Añadir título de navegación
+            .navigationBarTitleDisplayMode(.large)  // Configurar estilo de título
+            .toolbarBackground(isDarkMode ? Color.black.opacity(0.8) : Color.white.opacity(0.8), for: .navigationBar)  // Hacer la barra menos transparente
+            .toolbarBackground(.visible, for: .navigationBar)  // Asegurar que la barra sea visible
+            .toolbarColorScheme(isDarkMode ? .dark : .light, for: .navigationBar)  // Esquema de color adaptativo para la barra
+        }
+        .onAppear {
+            // Cargar datos populares si están vacíos
+            if animeService.popularAnime.isEmpty {
+                animeService.fetchPopularAnime()
             }
         }
     }
@@ -160,6 +155,10 @@ struct SearchView: View {
                             .frame(width: 150, height: 200)
                             .cornerRadius(8)
                             .clipped()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(isDarkMode ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+                            )
                     case .failure:
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
@@ -168,17 +167,18 @@ struct SearchView: View {
                             .cornerRadius(8)
                             .overlay(
                                 Image(systemName: "photo")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isDarkMode ? .white : .black)
                             )
                     @unknown default:
                         EmptyView()
                     }
                 }
+                .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), radius: 3, x: 0, y: 2)
                 
                 Text(anime.title)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .lineLimit(2)
                     .frame(width: 150, height: 40, alignment: .topLeading)
                 
@@ -196,7 +196,7 @@ struct SearchView: View {
                 }
             }
             .frame(width: 150)
-            .background(Color.black)
+            .background(isDarkMode ? Color.black : Color.white)
         }
     }
     

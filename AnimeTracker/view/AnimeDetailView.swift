@@ -11,6 +11,7 @@ struct AnimeDetailView: View {
     let animeID: Int
     @EnvironmentObject var service: AnimeService
     @EnvironmentObject var userLibrary: UserLibrary
+    @AppStorage("isDarkMode") private var isDarkMode = true
     @State private var animeDetail: AnimePreview?
     @State private var isLoading = true
     @State private var expandSynopsis = false
@@ -27,7 +28,7 @@ struct AnimeDetailView: View {
             }
         }
         .navigationTitle("Anime Detail")
-        .background(Color.black.ignoresSafeArea())
+        .background(Color(isDarkMode ? .black : .white).ignoresSafeArea())
         .onAppear {
             loadAnimeDetails()
         }
@@ -81,7 +82,7 @@ struct AnimeDetailView: View {
                 Text("Episodes: \(episodeCount)")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .padding(.horizontal)
             }
         }
@@ -99,11 +100,17 @@ struct AnimeDetailView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, maxHeight: 300)
                     .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(isDarkMode ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), radius: 3, x: 0, y: 2)
             case .failure:
                 Image(systemName: "photo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, maxHeight: 300)
+                    .foregroundColor(isDarkMode ? .white : .black)
             @unknown default:
                 EmptyView()
             }
@@ -117,7 +124,7 @@ struct AnimeDetailView: View {
             Text(anime.title)
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
             
             // Status and type
@@ -232,12 +239,12 @@ struct AnimeDetailView: View {
             Text("Synopsis")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
             
             Text(synopsis)
                 .font(.body)
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .secondary)
                 .lineLimit(expandSynopsis ? nil : 3)
                 .padding(.horizontal)
             
@@ -258,7 +265,7 @@ struct AnimeDetailView: View {
             Text("Episodes")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
             
             ForEach(episodes) { episode in
@@ -272,7 +279,7 @@ struct AnimeDetailView: View {
             VStack(alignment: .leading) {
                 Text("Episode \(episode.number): \(episode.title)")
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(isDarkMode ? .white : .black)
                 
                 Text("\(episode.duration)")
                     .font(.subheadline)
@@ -314,7 +321,7 @@ struct AnimeDetailView: View {
             Text("Where to Watch")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
             
             ScrollView(.horizontal, showsIndicators: false) {

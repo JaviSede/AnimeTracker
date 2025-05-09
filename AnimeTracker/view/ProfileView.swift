@@ -7,84 +7,85 @@
 //
 
 import SwiftUI
-import SwiftData // Needed if interacting directly with models here
+import SwiftData // Necesario si interactúas directamente con modelos aquí
 
 struct ProfileView: View {
     @EnvironmentObject var authService: AuthService
-    // Removed UserLibrary dependency as stats will be fetched from UserModel
-    // @EnvironmentObject var userLibrary: UserLibrary
+    @AppStorage("isDarkMode") private var isDarkMode = true
     @State private var showingEditProfile = false
-    @State private var showingLoginView = false // Keep for logged-out state
+    @State private var showingLoginView = false // Mantener para el estado de desconexión
 
-    // Computed property for the current user
+    // Propiedad calculada para el usuario actual
     private var user: UserModel? {
         authService.currentUser
     }
 
-    // Computed property for user stats
+    // Propiedad calculada para las estadísticas del usuario
     private var stats: AnimeStats? {
         user?.stats
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Use a gradient background for a more modern feel
-                LinearGradient(gradient: Gradient(colors: [Color.purple.opacity(0.3), Color.black]),
-                               startPoint: .top, endPoint: .bottom)
-                    .ignoresSafeArea()
-
-                if authService.isAuthenticated, let user = user {
-                    // Main content scroll view
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 30) {
-                            // --- Profile Header --- 
-                            ProfileHeaderView(user: user)
-                            
-                            // --- Anime Stats Section --- 
-                            // Pass the stats object directly
-                            if let stats = stats {
-                                AnimeStatsSectionView(stats: stats)
-                            } else {
-                                // Placeholder or loading view for stats
-                                Text("Loading stats...")
-                                    .foregroundColor(.gray)
-                                    .padding()
-                            }
-
-                            // --- Profile Options Section ---
-                            ProfileOptionsSectionView(showingEditProfile: $showingEditProfile)
+        // Eliminar NavigationStack si ya está dentro de un TabView con NavigationStack
+        ZStack {
+            // Cambiar el fondo para que se adapte al modo claro/oscuro
+            LinearGradient(gradient: Gradient(colors: [
+                isDarkMode ? Color.purple.opacity(0.3) : Color.purple.opacity(0.1),
+                isDarkMode ? Color.black : Color.white
+            ]), startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+            
+            if authService.isAuthenticated, let user = user {
+                // Vista de desplazamiento del contenido principal
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 30) {
+                        // --- Cabecera del perfil --- 
+                        ProfileHeaderView(user: user)
+                        
+                        // --- Sección de estadísticas de anime --- 
+                        // Pasar el objeto de estadísticas directamente
+                        if let stats = stats {
+                            AnimeStatsSectionView(stats: stats)
+                        } else {
+                            // Marcador de posición o vista de carga para estadísticas
+                            Text("Cargando estadísticas...")
+                                .foregroundColor(.gray)
+                                .padding()
                         }
-                        .padding(.vertical) // Add padding top and bottom of VStack
+
+                        // --- Sección de opciones de perfil ---
+                        ProfileOptionsSectionView(showingEditProfile: $showingEditProfile)
                     }
-                } else {
-                    // --- Logged Out View ---
-                    LoggedOutView(showingLoginView: $showingLoginView)
+                    .padding(.vertical) // Añadir relleno arriba y abajo del VStack
                 }
-            }
-            .navigationTitle(user?.username ?? "Profile") // Dynamic title
-            .navigationBarTitleDisplayMode(.inline) // More compact nav bar
-            .toolbarColorScheme(.dark, for: .navigationBar) // Ensure nav bar items are visible
-            .toolbarBackground(Color.black.opacity(0.5), for: .navigationBar) // Semi-transparent black
-            .toolbarBackground(.visible, for: .navigationBar)
-            .sheet(isPresented: $showingEditProfile) {
-                // Present EditProfileView when showingEditProfile is true
-                // Ensure EditProfileView also gets necessary environment objects if needed
-                EditProfileView()
-                    .environmentObject(authService)
+            } else {
+                // --- Vista de desconectado ---
+                LoggedOutView(showingLoginView: $showingLoginView)
             }
         }
-        // Ensure environment objects are available if needed by subviews
-        // .environmentObject(authService) // Already available from parent
+        .navigationTitle(user?.username ?? "Perfil") // Mantener esto
+        .navigationBarTitleDisplayMode(.inline) // Barra de navegación más compacta
+        .toolbarColorScheme(.dark, for: .navigationBar) // Asegurar que los elementos de la barra de navegación sean visibles
+        .toolbarBackground(Color.black.opacity(0.5), for: .navigationBar) // Negro semitransparente
+        .toolbarBackground(.visible, for: .navigationBar)
+        .sheet(isPresented: $showingEditProfile) {
+            // Presentar EditProfileView cuando showingEditProfile es verdadero
+            // Asegurar que EditProfileView también reciba los objetos de entorno necesarios si es necesario
+            EditProfileView()
+                .environmentObject(authService)
+        }
+        // Asegurar que los objetos de entorno estén disponibles si son necesarios para las subvistas
+        // .environmentObject(authService) // Ya disponible desde el padre
     }
 }
 
-// MARK: - Subviews for ProfileView
+// MARK: - Subvistas para ProfileView
 
-// --- Profile Header View ---
+// --- Vista de cabecera de perfil ---
 struct ProfileHeaderView: View {
     let user: UserModel
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         VStack(spacing: 12) {
             // Profile Picture
@@ -114,13 +115,13 @@ struct ProfileHeaderView: View {
             Text(user.username)
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
 
             // Bio
             if let bio = user.bio, !bio.isEmpty {
                 Text(bio)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(isDarkMode ? .gray : .secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
@@ -139,9 +140,9 @@ struct ProfileHeaderView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 60, height: 60)
-            .foregroundColor(.white.opacity(0.7))
+            .foregroundColor(isDarkMode ? .white.opacity(0.7) : .gray.opacity(0.7))
             .padding(30)
-            .background(Color.gray.opacity(0.3))
+            .background(isDarkMode ? Color.gray.opacity(0.3) : Color.gray.opacity(0.1))
             .clipShape(Circle())
     }
 }
@@ -149,31 +150,29 @@ struct ProfileHeaderView: View {
 // --- Anime Stats Section View ---
 struct AnimeStatsSectionView: View {
     let stats: AnimeStats
-
-    // Define grid layout: 3 columns, flexible width
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 3)
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Anime Statistics")
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
 
-            // Use LazyVGrid for a flexible grid layout
             LazyVGrid(columns: columns, spacing: 20) {
                 StatItemView(title: "Watching", value: stats.watching, color: AnimeStatus.watching.color)
                 StatItemView(title: "Completed", value: stats.completed, color: AnimeStatus.completed.color)
                 StatItemView(title: "On Hold", value: stats.onHold, color: AnimeStatus.onHold.color)
                 StatItemView(title: "Dropped", value: stats.dropped, color: AnimeStatus.dropped.color)
                 StatItemView(title: "Plan to Watch", value: stats.planToWatch, color: AnimeStatus.planToWatch.color)
-                StatItemView(title: "Total Anime", value: stats.totalAnime, color: .white)
+                StatItemView(title: "Total Anime", value: stats.totalAnime, color: isDarkMode ? .white : .black)
             }
             .padding(.horizontal)
 
             Divider().background(Color.gray.opacity(0.5)).padding(.horizontal)
 
-            // Summary Stats (Episodes, Days Watched)
             HStack {
                 StatSummaryView(title: "Total Episodes Watched", value: String(stats.totalEpisodes))
                 Spacer()
@@ -182,9 +181,10 @@ struct AnimeStatsSectionView: View {
             .padding(.horizontal)
         }
         .padding()
-        .background(Color.black.opacity(0.3))
+        .background(isDarkMode ? Color.black.opacity(0.3) : Color.white.opacity(0.7))
         .cornerRadius(15)
-        .padding(.horizontal) // Add horizontal padding to the section card
+        .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), radius: 3, x: 0, y: 2)
+        .padding(.horizontal)
     }
 }
 
@@ -193,7 +193,8 @@ struct StatItemView: View {
     let title: String
     let value: Int
     let color: Color
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         VStack(spacing: 4) {
             Text("\(value)")
@@ -202,7 +203,7 @@ struct StatItemView: View {
                 .foregroundColor(color)
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .secondary)
                 .multilineTextAlignment(.center)
         }
         .frame(minWidth: 0, maxWidth: .infinity) // Ensure items fill width
@@ -213,16 +214,17 @@ struct StatItemView: View {
 struct StatSummaryView: View {
     let title: String
     let value: String
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .secondary)
             Text(value)
                 .font(.headline)
                 .fontWeight(.medium)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
         }
     }
 }
@@ -231,7 +233,8 @@ struct StatSummaryView: View {
 struct ProfileOptionsSectionView: View {
     @EnvironmentObject var authService: AuthService
     @Binding var showingEditProfile: Bool
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         VStack(spacing: 10) {
             OptionButton(title: "Edit Profile", icon: "pencil") {
@@ -239,12 +242,10 @@ struct ProfileOptionsSectionView: View {
             }
             
             OptionButton(title: "Export Library", icon: "square.and.arrow.up") {
-                // TODO: Implement export functionality
                 print("Export Library tapped")
             }
             
             OptionButton(title: "Settings", icon: "gear") {
-                // TODO: Navigate to or present settings view
                 print("Settings tapped")
             }
             
@@ -264,7 +265,8 @@ struct OptionButton: View {
     let icon: String
     var role: ButtonRole? = nil
     let action: () -> Void
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         Button(role: role, action: action) {
             HStack {
@@ -278,8 +280,8 @@ struct OptionButton: View {
                 }
             }
             .padding()
-            .background(Color.black.opacity(0.2))
-            .foregroundColor(role == .destructive ? .red : .white)
+            .background(isDarkMode ? Color.black.opacity(0.2) : Color.gray.opacity(0.1))
+            .foregroundColor(role == .destructive ? .red : (isDarkMode ? .white : .black))
             .cornerRadius(10)
         }
     }
@@ -288,22 +290,23 @@ struct OptionButton: View {
 // --- Logged Out View ---
 struct LoggedOutView: View {
     @Binding var showingLoginView: Bool
-
+    @AppStorage("isDarkMode") private var isDarkMode = true
+    
     var body: some View {
         VStack(spacing: 25) {
             Spacer()
             Image(systemName: "person.crop.circle.badge.xmark")
                 .font(.system(size: 80))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(isDarkMode ? .gray.opacity(0.7) : .gray.opacity(0.5))
             
             Text("Not Logged In")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(isDarkMode ? .white : .black)
             
             Text("Log in or sign up to track your anime and manage your profile.")
                 .font(.body)
-                .foregroundColor(.gray)
+                .foregroundColor(isDarkMode ? .gray : .secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             
@@ -326,10 +329,7 @@ struct LoggedOutView: View {
         }
         .padding()
         .fullScreenCover(isPresented: $showingLoginView) {
-            // Assuming LoginView handles both login and presenting registration
             LoginView()
-                // Pass necessary environment objects if LoginView needs them
-                // .environmentObject(authService) // Already available
         }
     }
 }

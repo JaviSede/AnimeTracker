@@ -21,16 +21,20 @@ struct ContentView: View {
         _authService = StateObject(wrappedValue: auth)
         _userLibrary = StateObject(wrappedValue: UserLibrary(authService: auth))
     }
-
+    
     var body: some View {
         // Use a Group to conditionally present views based on authentication
-        Group {
-            if authService.isAuthenticated {
-                // If authenticated, show the main tab view
-                MainTabView()
-            } else {
-                // If not authenticated, show the login view
-                LoginView()
+        NavigationStack {  // Añadir un único NavigationStack aquí
+            Group {
+                if authService.isAuthenticated {
+                    // If authenticated, show the main tab view
+                    MainTabView()
+                        .navigationBarBackButtonHidden(true)  // Ocultar botón de retroceso
+                } else {
+                    // If not authenticated, show the login view
+                    LoginView()
+                        .navigationBarBackButtonHidden(true)  // Ocultar botón de retroceso
+                }
             }
         }
         // Inject environment objects into the view hierarchy
@@ -57,6 +61,18 @@ struct ContentView: View {
                 print("Failed to create ModelContainer: \(error.localizedDescription)")
             }
         }
+        .onAppear {
+            // No es necesario observar cambios manualmente ya que @AppStorage
+            // actualizará automáticamente la vista cuando cambie el valor
+            print("Dark mode is currently \(isDarkMode ? "enabled" : "disabled")")
+            
+            // Escuchar cambios en el modo oscuro
+            NotificationCenter.default.addObserver(forName: Notification.Name("DarkModeChanged"), object: nil, queue: .main) { _ in
+                // Forzar actualización de la vista actualizando el valor de isDarkMode
+                let currentValue = isDarkMode
+                isDarkMode = !currentValue
+                isDarkMode = currentValue
+            }
+        }
     }
 }
-

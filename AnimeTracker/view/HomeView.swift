@@ -75,7 +75,8 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color.black
+                // Cambiar de color fijo a condicional
+                Color(isDarkMode ? .black : .white)
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -85,7 +86,7 @@ struct HomeView: View {
                         Text("Currently Watching")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(isDarkMode ? .white : .black)
                             .padding(.horizontal)
                         
                         currentlyWatchingSection
@@ -94,7 +95,7 @@ struct HomeView: View {
                         Text("Recommended For You")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(isDarkMode ? .white : .black)
                             .padding(.horizontal)
                         
                         recommendedSection
@@ -103,7 +104,7 @@ struct HomeView: View {
                         Text("Popular Now")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(isDarkMode ? .white : .black)
                             .padding(.horizontal)
                         
                         popularSection
@@ -111,29 +112,6 @@ struct HomeView: View {
                     .padding(.vertical)
                 }
                 .navigationTitle("Home")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        HStack {
-                            Button(action: {
-                                // Mostrar configuración directamente
-                                showSettings = true
-                            }) {
-                                Image(systemName: "gear")
-                                    .foregroundColor(.purple)
-                            }
-                            
-                            Button(action: {
-                                // Navegar a la vista de perfil directamente
-                                switchToProfileTab()
-                            }) {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundColor(.purple)
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -169,7 +147,7 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(savedAnime.title)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(isDarkMode ? .white : .black)
                         .lineLimit(2)
                     
                     Text(savedAnime.status.rawValue)
@@ -205,68 +183,148 @@ struct HomeView: View {
         .buttonStyle(PlainButtonStyle())
     }
     
+    @ViewBuilder
     private var recommendedSection: some View {
-        Group {
-            if animeService.isLoading && animeService.recommendedAnime.isEmpty {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                    .frame(maxWidth: .infinity)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 15) {
-                        ForEach(animeService.recommendedAnime) { anime in
-                            animeCard(anime: anime)
-                        }
+        if animeService.isLoading && animeService.recommendedAnime.isEmpty {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                .frame(maxWidth: .infinity)
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 15) {
+                    ForEach(animeService.recommendedAnime) { anime in
+                        animeCard(anime: anime)
+                            .onAppear {
+                                prefetchNextImages(currentIndex: animeService.recommendedAnime.firstIndex(of: anime) ?? 0, 
+                                                   in: animeService.recommendedAnime)
+                            }
                     }
-                    .padding(.horizontal)
                 }
+                .padding(.horizontal)
             }
         }
     }
     
+    @ViewBuilder
     private var popularSection: some View {
-        Group {
-            if animeService.isLoading && animeService.popularAnime.isEmpty {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                    .frame(maxWidth: .infinity)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 15) {
-                        ForEach(animeService.popularAnime) { anime in
-                            animeCard(anime: anime)
-                        }
+        if animeService.isLoading && animeService.popularAnime.isEmpty {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                .frame(maxWidth: .infinity)
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 15) {
+                    ForEach(animeService.popularAnime) { anime in
+                        animeCard(anime: anime)
+                            .onAppear {
+                                prefetchNextImages(currentIndex: animeService.popularAnime.firstIndex(of: anime) ?? 0, 
+                                                   in: animeService.popularAnime)
+                            }
                     }
-                    .padding(.horizontal)
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+    
+    
+    // Función para precargar las próximas imágenes
+    private func prefetchNextImages(currentIndex: Int, in animes: [AnimePreview]) {
+        // Precargar las próximas 3 imágenes para mejorar la experiencia de desplazamiento
+        let prefetchCount = 3
+        let nextIndices = (1...prefetchCount).map { currentIndex + $0 }
+        
+        for index in nextIndices {
+            if index < animes.count {
+                let imageURL = animes[index].images.jpg.image_url
+                if let url = URL(string: imageURL) {
+                    // Iniciar la descarga en segundo plano
+                    URLSession.shared.dataTask(with: url) { _, _, _ in }.resume()
                 }
             }
         }
     }
     
     private func animeCard(anime: AnimePreview) -> some View {
-        NavigationLink(destination: AnimeDetailView(animeID: anime.mal_id)) {
+        NavigationLink {
+            AnimeDetailView(animeID: anime.mal_id)
+        } label: {
             VStack(spacing: 5) {
-                animeImageView(imageURL: anime.images.jpg.image_url, width: 120, height: 160)
+                AsyncImage(url: URL(string: anime.images.jpg.image_url), transaction: Transaction(animation: .easeInOut)) { phase in
+                    switch phase {
+                    case .empty:
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(width: 120, height: 160)
+                            .overlay(
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                                    .scaleEffect(0.7)
+                            )
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 120, height: 160)
+                            .cornerRadius(10)
+                            .clipped()
+                            .transition(.opacity)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(isDarkMode ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                    case .failure:
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(width: 120, height: 160)
+                            .overlay(
+                                Image(systemName: "photo")
+                                    .foregroundColor(.gray)
+                            )
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .layoutPriority(1)
+                .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), radius: 3, x: 0, y: 2)
                 
                 Text(anime.title)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .lineLimit(1)
                     .frame(width: 120)
                     .truncationMode(.tail)
             }
         }
+        .buttonStyle(PlainButtonStyle())
     }
     
     private func animeImageView(imageURL: String, width: CGFloat, height: CGFloat) -> some View {
-        AsyncImage(url: URL(string: imageURL)) { phase in
-            if let image = phase.image {
+        AsyncImage(url: URL(string: imageURL), transaction: Transaction(animation: .easeInOut)) { phase in
+            switch phase {
+            case .empty:
+                // Mostrar un placeholder con dimensiones exactas mientras carga
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: width, height: height)
+                    .overlay(
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                            .scaleEffect(0.7)
+                    )
+                    .transition(.opacity)
+            case .success(let image):
+                // Aplicar transición suave cuando la imagen carga exitosamente
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: width, height: height)
                     .cornerRadius(10)
-            } else if phase.error != nil {
+                    .clipped()
+                    .transition(.opacity)
+                    .background(Color.black.opacity(0.1)) // Fondo sutil para imágenes con transparencia
+            case .failure:
+                // Mostrar un placeholder de error con ícono
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.gray.opacity(0.2))
                     .frame(width: width, height: height)
@@ -274,22 +332,14 @@ struct HomeView: View {
                         Image(systemName: "photo")
                             .foregroundColor(.gray)
                     )
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(width: width, height: height)
-                    .overlay(
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                    )
+                    .transition(.opacity)
+            @unknown default:
+                EmptyView()
             }
         }
+        // Aplicar prioridad alta para la carga de imágenes visibles
+        .layoutPriority(1)
+        // Añadir sombra sutil para mejorar la apariencia
+        .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
     }
-}
-
-#Preview {
-    NavigationHome()
-        .environmentObject(AuthService())
-        .environmentObject(AnimeService())
-        .environmentObject(UserLibrary(authService: AuthService()))
 }

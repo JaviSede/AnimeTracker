@@ -63,8 +63,33 @@ struct MainTabView: View {
         }
         // Apply the preferred color scheme based on user settings
         .preferredColorScheme(isDarkMode ? .dark : .light)
-        // Set up notification observers when the view appears
+        // Set up notification observers and configure TabBar appearance when the view appears
+        // En la función onAppear
         .onAppear {
+            // Configurar la apariencia de la barra de pestañas
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithOpaqueBackground()
+            
+            // Ajustar colores según el modo
+            if isDarkMode {
+                tabBarAppearance.backgroundColor = UIColor.black
+                tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+                tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.gray]
+                tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.purple
+                tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.purple]
+            } else {
+                tabBarAppearance.backgroundColor = UIColor.white
+                tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+                tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.gray]
+                tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.purple
+                tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.purple]
+            }
+            
+            // Aplicar la apariencia a la barra de pestañas
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            
+            // Configurar notificaciones
             setupNotifications()
         }
         // Inject environment objects needed by the child views within the TabView
@@ -80,6 +105,32 @@ struct MainTabView: View {
         // Observe notification to switch to the search tab
         NotificationCenter.default.addObserver(forName: NSNotification.Name("SwitchToSearchTab"), object: nil, queue: .main) { _ in
             selectedTab = 1
+        }
+        
+        // Observar cambios en el modo oscuro
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("DarkModeChanged"), object: nil, queue: .main) { _ in
+            // Actualizar la apariencia de la barra de pestañas
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithOpaqueBackground()
+            
+            // Ajustar colores según el modo
+            if self.isDarkMode {
+                tabBarAppearance.backgroundColor = UIColor.black
+                tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+                tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.gray]
+                tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.purple
+                tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.purple]
+            } else {
+                tabBarAppearance.backgroundColor = UIColor.white
+                tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+                tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.gray]
+                tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.purple
+                tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.purple]
+            }
+            
+            // Aplicar la apariencia a la barra de pestañas
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
         // Add other notification observers if needed
     }
