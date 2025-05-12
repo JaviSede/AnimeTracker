@@ -27,7 +27,7 @@ struct AnimeDetailView: View {
                 errorView
             }
         }
-        .navigationTitle("Anime Detail")
+        .navigationTitle("Detalles del Anime")
         .background(Color(isDarkMode ? .black : .white).ignoresSafeArea())
         .onAppear {
             loadAnimeDetails()
@@ -49,7 +49,7 @@ struct AnimeDetailView: View {
     }
     
     private var errorView: some View {
-        Text("Failed to load anime details")
+        Text("Error al cargar los detalles del anime")
             .foregroundColor(.red)
             .padding()
     }
@@ -69,7 +69,7 @@ struct AnimeDetailView: View {
             if let synopsis = anime.synopsis {
                 synopsisSection(synopsis: synopsis)
             } else {
-                synopsisSection(synopsis: "No synopsis available.")
+                synopsisSection(synopsis: "No hay sinopsis disponible.")
             }
             
             // Comenta esta sección hasta que tengas la propiedad streaming
@@ -79,7 +79,7 @@ struct AnimeDetailView: View {
             
             // Episodes section
             if let episodeCount = anime.episodes {
-                Text("Episodes: \(episodeCount)")
+                Text("Episodios: \(episodeCount)")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(isDarkMode ? .white : .black)
@@ -184,7 +184,7 @@ struct AnimeDetailView: View {
             }) {
                 HStack {
                     Image(systemName: userLibrary.isInLibrary(id: animeID) ? "checkmark.circle.fill" : "plus.circle")
-                    Text(userLibrary.isInLibrary(id: animeID) ? "Update in Library" : "Add to Library")
+                    Text(userLibrary.isInLibrary(id: animeID) ? "Actualizar en Biblioteca" : "Añadir a Biblioteca")
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -205,7 +205,7 @@ struct AnimeDetailView: View {
                         }
                     }
                 }) {
-                    Text("Watching")
+                    Text("Viendo")
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .background(userLibrary.isInLibrary(id: animeID) && userLibrary.getAnimeStatus(id: animeID) == .watching ? Color.purple : Color.gray.opacity(0.3))
@@ -222,7 +222,7 @@ struct AnimeDetailView: View {
                         }
                     }
                 }) {
-                    Text("Plan to Watch")
+                    Text("Pendiente")
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .background(userLibrary.isInLibrary(id: animeID) && userLibrary.getAnimeStatus(id: animeID) == .planToWatch ? Color.purple : Color.gray.opacity(0.3))
@@ -236,7 +236,7 @@ struct AnimeDetailView: View {
     
     private func synopsisSection(synopsis: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Synopsis")
+            Text("Sinopsis")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(isDarkMode ? .white : .black)
@@ -262,7 +262,7 @@ struct AnimeDetailView: View {
     
     private func episodesSection(episodes: [AnimeEpisode]) -> some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("Episodes")
+            Text("Episodios")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(isDarkMode ? .white : .black)
@@ -277,7 +277,7 @@ struct AnimeDetailView: View {
     private func episodeRow(episode: AnimeEpisode) -> some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("Episode \(episode.number): \(episode.title)")
+                Text("Episodio \(episode.number): \(episode.title)")
                     .fontWeight(.bold)
                     .foregroundColor(isDarkMode ? .white : .black)
                 
@@ -318,7 +318,7 @@ struct AnimeDetailView: View {
     
     private func streamingServicesSection(services: [StreamingService]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Where to Watch")
+            Text("Donde Ver")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(isDarkMode ? .white : .black)

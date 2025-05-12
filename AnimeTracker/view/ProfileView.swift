@@ -63,7 +63,7 @@ struct ProfileView: View {
                 LoggedOutView(showingLoginView: $showingLoginView)
             }
         }
-        .navigationTitle(user?.username ?? "Perfil") // Mantener esto
+        .navigationTitle(user?.username ?? "Perfil")
         .navigationBarTitleDisplayMode(.inline) // Barra de navegación más compacta
         .toolbarColorScheme(.dark, for: .navigationBar) // Asegurar que los elementos de la barra de navegación sean visibles
         .toolbarBackground(Color.black.opacity(0.5), for: .navigationBar) // Negro semitransparente
@@ -74,8 +74,6 @@ struct ProfileView: View {
             EditProfileView()
                 .environmentObject(authService)
         }
-        // Asegurar que los objetos de entorno estén disponibles si son necesarios para las subvistas
-        // .environmentObject(authService) // Ya disponible desde el padre
     }
 }
 
@@ -127,7 +125,7 @@ struct ProfileHeaderView: View {
             }
 
             // Join Date
-            Text("Member since \(user.joinDate, style: .date)")
+            Text("Miembro desde \(user.joinDate, style: .date)")
                 .font(.caption)
                 .foregroundColor(.gray)
         }
@@ -156,17 +154,17 @@ struct AnimeStatsSectionView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("Anime Statistics")
+            Text("Estadísticas de Anime")
                 .font(.headline)
                 .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.horizontal)
 
             LazyVGrid(columns: columns, spacing: 20) {
-                StatItemView(title: "Watching", value: stats.watching, color: AnimeStatus.watching.color)
-                StatItemView(title: "Completed", value: stats.completed, color: AnimeStatus.completed.color)
-                StatItemView(title: "On Hold", value: stats.onHold, color: AnimeStatus.onHold.color)
-                StatItemView(title: "Dropped", value: stats.dropped, color: AnimeStatus.dropped.color)
-                StatItemView(title: "Plan to Watch", value: stats.planToWatch, color: AnimeStatus.planToWatch.color)
+                StatItemView(title: "Viendo", value: stats.watching, color: AnimeStatus.watching.color)
+                StatItemView(title: "Completados", value: stats.completed, color: AnimeStatus.completed.color)
+                StatItemView(title: "En Pausa", value: stats.onHold, color: AnimeStatus.onHold.color)
+                StatItemView(title: "Abandonados", value: stats.dropped, color: AnimeStatus.dropped.color)
+                StatItemView(title: "Pendientes", value: stats.planToWatch, color: AnimeStatus.planToWatch.color)
                 StatItemView(title: "Total Anime", value: stats.totalAnime, color: isDarkMode ? .white : .black)
             }
             .padding(.horizontal)
@@ -174,9 +172,9 @@ struct AnimeStatsSectionView: View {
             Divider().background(Color.gray.opacity(0.5)).padding(.horizontal)
 
             HStack {
-                StatSummaryView(title: "Total Episodes Watched", value: String(stats.totalEpisodes))
+                StatSummaryView(title: "Total Episodios Vistos", value: String(stats.totalEpisodes))
                 Spacer()
-                StatSummaryView(title: "Days Watched", value: String(format: "%.1f", stats.daysWatched))
+                StatSummaryView(title: "Días Vistos", value: String(format: "%.1f", stats.daysWatched))
             }
             .padding(.horizontal)
         }
@@ -237,15 +235,15 @@ struct ProfileOptionsSectionView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            OptionButton(title: "Edit Profile", icon: "pencil") {
+            OptionButton(title: "Editar perfil;", icon: "pencil") {
                 showingEditProfile = true
             }
             
-            OptionButton(title: "Export Library", icon: "square.and.arrow.up") {
+            OptionButton(title: "Exportar biblioteca", icon: "square.and.arrow.up") {
                 print("Export Library tapped")
             }
             
-            OptionButton(title: "Settings", icon: "gear") {
+            OptionButton(title: "Configuración", icon: "gear") {
                 print("Settings tapped")
             }
             
@@ -299,12 +297,12 @@ struct LoggedOutView: View {
                 .font(.system(size: 80))
                 .foregroundColor(isDarkMode ? .gray.opacity(0.7) : .gray.opacity(0.5))
             
-            Text("Not Logged In")
+            Text("No Loggeado")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(isDarkMode ? .white : .black)
             
-            Text("Log in or sign up to track your anime and manage your profile.")
+            Text("Logueese para ver su perfil y estadísticas de anime")
                 .font(.body)
                 .foregroundColor(isDarkMode ? .gray : .secondary)
                 .multilineTextAlignment(.center)
@@ -334,18 +332,6 @@ struct LoggedOutView: View {
     }
 }
 
-// MARK: - Helper Functions (Moved from original ProfileView)
-
-// No longer needed here as stats come from AnimeStats model
-// private func calculateTotalEpisodes() -> Int { ... }
-// private func calculateDaysWatched() -> Double { ... }
-
-// Date formatting is handled inline now with `style: .date`
-// private func formattedDate(_ date: Date) -> String { ... }
-
-// Stat view is replaced by StatItemView and StatSummaryView
-// private func statView(title: String, value: String) -> some View { ... }
-
 // MARK: - Preview
 
 struct ProfileView_Previews: PreviewProvider {
@@ -369,8 +355,6 @@ struct ProfileView_Previews: PreviewProvider {
         
         return ProfileView()
             .environmentObject(mockAuthService)
-            // Provide a dummy ModelContainer for preview if needed by subviews
-            // .modelContainer(for: [UserModel.self, AnimeStats.self], inMemory: true)
             .preferredColorScheme(.dark)
     }
 }

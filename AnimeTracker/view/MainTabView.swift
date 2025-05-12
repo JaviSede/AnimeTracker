@@ -26,7 +26,7 @@ struct MainTabView: View {
                 })
             }
             .tabItem {
-                Label("Home", systemImage: "house.fill")
+                Label("Inicio", systemImage: "house.fill")
             }
             .tag(0) // Tag identifies this tab
             
@@ -35,7 +35,7 @@ struct MainTabView: View {
                 SearchView()
             }
             .tabItem {
-                Label("Search", systemImage: "magnifyingglass")
+                Label("Buscar", systemImage: "magnifyingglass")
             }
             .tag(1)
             
@@ -44,7 +44,7 @@ struct MainTabView: View {
                 LibraryView()
             }
             .tabItem {
-                Label("Library", systemImage: "books.vertical.fill")
+                Label("Biblioteca", systemImage: "books.vertical.fill")
             }
             .tag(2)
             
@@ -53,7 +53,7 @@ struct MainTabView: View {
                 ProfileView()
             }
             .tabItem {
-                Label("Profile", systemImage: "person.fill")
+                Label("Perfil", systemImage: "person.fill")
             }
             .tag(3)
         }
@@ -92,12 +92,6 @@ struct MainTabView: View {
             // Configurar notificaciones
             setupNotifications()
         }
-        // Inject environment objects needed by the child views within the TabView
-        // Note: These are already injected by ContentView, but explicitly stating them here
-        // can sometimes help with clarity or specific scenarios, though often redundant.
-        // .environmentObject(animeService)
-        // .environmentObject(userLibrary)
-        // .environmentObject(authService)
     }
     
     // Function to set up notification observers

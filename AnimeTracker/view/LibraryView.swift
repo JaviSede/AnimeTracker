@@ -21,10 +21,10 @@ struct LibraryView: View {
     
     // Definir las opciones de ordenación
     enum SortOption: String, CaseIterable {
-        case title = "Title"
-        case lastUpdated = "Last Updated"
-        case progress = "Progress"
-        case score = "Score"
+        case title = "Título"
+        case lastUpdated = "Última Actualización"
+        case progress = "Progreso"
+        case score = "Puntuación"
         
         var icon: String {
             switch self {
@@ -57,7 +57,7 @@ struct LibraryView: View {
                 libraryListView
             }
         }
-        .navigationTitle("My Library")
+        .navigationTitle("Mi Biblioteca")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

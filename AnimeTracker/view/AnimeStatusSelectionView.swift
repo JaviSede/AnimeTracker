@@ -73,25 +73,30 @@ struct AnimeStatusSelectionView: View {
                         
                         // Status selection
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Status")
+                            Text("Estado")
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
-                            Picker("Status", selection: $selectedStatus) {
-                                ForEach(AnimeStatus.allCases.filter { $0 != .all }, id: \.self) { status in
-                                    Text(status.displayName)
-                                        .tag(status)
-                                }
+                            // Primera fila de botones
+                            HStack(spacing: 8) {
+                                StatusButton(title: "Viendo", status: .watching, selectedStatus: $selectedStatus)
+                                StatusButton(title: "Completado", status: .completed, selectedStatus: $selectedStatus)
+                                StatusButton(title: "Pendiente", status: .planToWatch, selectedStatus: $selectedStatus)
                             }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .padding(.horizontal)
+                            
+                            // Segunda fila de botones
+                            HStack(spacing: 8) {
+                                StatusButton(title: "En Pausa", status: .onHold, selectedStatus: $selectedStatus)
+                                StatusButton(title: "Abandonado", status: .dropped, selectedStatus: $selectedStatus)
+                                Spacer()
+                            }
                         }
                         .padding(.horizontal)
                         
                         // Episode counter (only for watching status)
                         if selectedStatus == .watching {
                             VStack(alignment: .leading, spacing: 10) {
-                                Text("Current Episode")
+                                Text("Episodio Actual")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                 
@@ -129,7 +134,7 @@ struct AnimeStatusSelectionView: View {
                                     Spacer()
                                     
                                     if let episodes = animeDetail.episodes, episodes > 0 {
-                                        Text("of \(episodes)")
+                                        Text("de \(episodes)")
                                             .font(.subheadline)
                                             .foregroundColor(.gray)
                                     }
@@ -141,7 +146,7 @@ struct AnimeStatusSelectionView: View {
                         
                         // Score
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Your Score")
+                            Text("Tu Puntuación")
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
@@ -166,7 +171,7 @@ struct AnimeStatusSelectionView: View {
                         
                         // Notes
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Notes")
+                            Text("Notas")
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
@@ -184,7 +189,7 @@ struct AnimeStatusSelectionView: View {
                             saveAnime()
                             dismiss()
                         }) {
-                            Text("Save to Library")
+                            Text("Guardar en Biblioteca")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding()
@@ -198,11 +203,11 @@ struct AnimeStatusSelectionView: View {
                     .padding(.vertical)
                 }
             }
-            .navigationTitle("Add to Library")
+            .navigationTitle("Añadir a Biblioteca")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("Cancelar") {
                         dismiss()
                     }
                     .foregroundColor(.purple)
@@ -214,7 +219,7 @@ struct AnimeStatusSelectionView: View {
                     selectedStatus = savedAnime.status 
                     currentEpisode = savedAnime.currentEpisode 
                     score = Double(savedAnime.score ?? 0) 
-                    notes = savedAnime.notes! 
+                    notes = savedAnime.notes ?? ""
                 }
             }
         }
@@ -243,6 +248,28 @@ struct AnimeStatusSelectionView: View {
                     notes: notes
                 )
             }
+        }
+    }
+}
+
+// Componente de botón de estado personalizado
+struct StatusButton: View {
+    let title: String
+    let status: AnimeStatus
+    @Binding var selectedStatus: AnimeStatus
+    
+    var body: some View {
+        Button(action: {
+            selectedStatus = status
+        }) {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.white)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity)
+                .background(selectedStatus == status ? status.color : Color.gray.opacity(0.3))
+                .cornerRadius(8)
         }
     }
 }

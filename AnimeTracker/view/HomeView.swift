@@ -83,7 +83,7 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         
                         // Currently Watching Section
-                        Text("Currently Watching")
+                        Text("Viendo Actualmente")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(isDarkMode ? .white : .black)
@@ -92,7 +92,7 @@ struct HomeView: View {
                         currentlyWatchingSection
                         
                         // Recommended For You Section
-                        Text("Recommended For You")
+                        Text("Recomendado Para Ti")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(isDarkMode ? .white : .black)
@@ -101,7 +101,7 @@ struct HomeView: View {
                         recommendedSection
                         
                         // Popular Now Section
-                        Text("Popular Now")
+                        Text("Popular Ahora")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(isDarkMode ? .white : .black)
@@ -111,7 +111,7 @@ struct HomeView: View {
                     }
                     .padding(.vertical)
                 }
-                .navigationTitle("Home")
+                .navigationTitle("Inicio")
             }
         }
     }
@@ -130,7 +130,7 @@ struct HomeView: View {
                 if let firstAnime = watchingAnimes.first {
                     currentlyWatchingItem(savedAnime: firstAnime)
                 } else {
-                    Text("No anime in your watching list")
+                    Text("No hay anime en tu lista de viendo")
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -155,11 +155,11 @@ struct HomeView: View {
                         .foregroundColor(.purple)
                     
                     if let totalEpisodes = savedAnime.totalEpisodes, totalEpisodes > 0 {
-                        Text("Episode \(savedAnime.currentEpisode)/\(totalEpisodes)")
+                        Text("Episodio \(savedAnime.currentEpisode)/\(totalEpisodes)")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     } else {
-                        Text("Episode \(savedAnime.currentEpisode)/Unknown")
+                        Text("Episodio \(savedAnime.currentEpisode)/Desconocido")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
@@ -169,7 +169,7 @@ struct HomeView: View {
                         let newEpisode = savedAnime.currentEpisode + 1
                         userLibrary.updateAnime(id: savedAnime.id, currentEpisode: newEpisode)
                     }) {
-                        Text("Continue")
+                        Text("Continuar")
                             .fontWeight(.bold)
                             .frame(width: 100, height: 40)
                             .background(Color.purple)

@@ -27,7 +27,7 @@ struct SearchView: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
                         
-                        TextField("Search anime...", text: $searchText)
+                        TextField("Buscar anime...", text: $searchText)
                             .foregroundColor(isDarkMode ? .white : .black)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
@@ -62,14 +62,14 @@ struct SearchView: View {
                         Spacer()
                     } else if searchResults.isEmpty && !searchText.isEmpty {
                         Spacer()
-                        Text("No results found")
+                        Text("No se encontraron resultados")
                             .foregroundColor(.gray)
                         Spacer()
                     } else if searchResults.isEmpty {
                         // Show trending or popular anime when no search
                         ScrollView {
                             VStack(alignment: .leading, spacing: 20) {
-                                Text("Popular Anime")
+                                Text("Anime Popular")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(isDarkMode ? .white : .black)
@@ -95,7 +95,7 @@ struct SearchView: View {
                         // Search results
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
-                                Text("Search Results")
+                                Text("Resultados de Búsqueda")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(isDarkMode ? .white : .black)
@@ -123,7 +123,7 @@ struct SearchView: View {
                     AnimeDetailView(animeID: animeID)
                 }
             }
-            .navigationTitle("Search")  // Añadir título de navegación
+            .navigationTitle("Buscar")  // Añadir título de navegación
             .navigationBarTitleDisplayMode(.large)  // Configurar estilo de título
             .toolbarBackground(isDarkMode ? Color.black.opacity(0.8) : Color.white.opacity(0.8), for: .navigationBar)  // Hacer la barra menos transparente
             .toolbarBackground(.visible, for: .navigationBar)  // Asegurar que la barra sea visible

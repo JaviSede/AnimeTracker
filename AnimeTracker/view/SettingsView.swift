@@ -51,28 +51,28 @@ struct SettingsView: View {
                             NotificationCenter.default.post(name: Notification.Name("DarkModeChanged"), object: nil)
                         }
                         
-                        Picker("Default Sort", selection: $defaultSortOption) {
-                            Text("Title").tag("title")
-                            Text("Last Updated").tag("lastUpdated")
-                            Text("Progress").tag("progress")
-                            Text("Score").tag("score")
+                        Picker("Orden Predeterminado", selection: $defaultSortOption) {
+                            Text("Título").tag("title")
+                            Text("Última Actualización").tag("lastUpdated")
+                            Text("Progreso").tag("progress")
+                            Text("Puntuación").tag("score")
                         }
                         .foregroundColor(isDarkMode ? .white : .black)
                         
-                        Toggle("Sort Ascending", isOn: $sortAscending)
+                        Toggle("Orden Ascendente", isOn: $sortAscending)
                             .foregroundColor(isDarkMode ? .white : .black)
                             .tint(.purple)
                     }
                     
-                    Section(header: Text("Library").foregroundColor(isDarkMode ? .gray : .black)) {
-                        Toggle("Auto-mark as Completed", isOn: $autoMarkAsCompleted)
+                    Section(header: Text("Biblioteca").foregroundColor(isDarkMode ? .gray : .black)) {
+                        Toggle("Marcar como Completado Automáticamente", isOn: $autoMarkAsCompleted)
                             .foregroundColor(isDarkMode ? .white : .black)
                             .tint(.purple)
                             .onChange(of: autoMarkAsCompleted) { newValue in
                                 UserDefaults.standard.set(newValue, forKey: "autoMarkAsCompleted")
                             }
                         
-                        Toggle("Show Progress Bar", isOn: $showProgressBar)
+                        Toggle("Mostrar Barra de Progreso", isOn: $showProgressBar)
                             .foregroundColor(isDarkMode ? .white : .black)
                             .tint(.purple)
                             .onChange(of: showProgressBar) { newValue in
@@ -80,32 +80,32 @@ struct SettingsView: View {
                             }
                     }
                     
-                    Section(header: Text("Data").foregroundColor(isDarkMode ? .gray : .black)) {
+                    Section(header: Text("Datos").foregroundColor(isDarkMode ? .gray : .black)) {
                         Button(action: {
                             exportLibraryData()
                         }) {
-                            Label("Export Library Data", systemImage: "square.and.arrow.up")
+                            Label("Exportar Datos de Biblioteca", systemImage: "square.and.arrow.up")
                                 .foregroundColor(isDarkMode ? .white : .black)
                         }
                         
                         Button(action: {
                             showingImportSheet = true
                         }) {
-                            Label("Import Library Data", systemImage: "square.and.arrow.down")
+                            Label("Importar Datos de Biblioteca", systemImage: "square.and.arrow.down")
                                 .foregroundColor(isDarkMode ? .white : .black)
                         }
                         
                         Button(action: {
                             showingClearCacheAlert = true
                         }) {
-                            Label("Clear Cache", systemImage: "trash")
+                            Label("Limpiar Caché", systemImage: "trash")
                                 .foregroundColor(.red)
                         }
                     }
                     
-                    Section(header: Text("About").foregroundColor(isDarkMode ? .gray : .black)) {
+                    Section(header: Text("Acerca de").foregroundColor(isDarkMode ? .gray : .black)) {
                         HStack {
-                            Text("Version")
+                            Text("Versión")
                                 .foregroundColor(isDarkMode ? .white : .black)
                             Spacer()
                             Text("1.0.0")
@@ -113,12 +113,12 @@ struct SettingsView: View {
                         }
                         
                         NavigationLink(destination: PrivacyPolicyView().preferredColorScheme(isDarkMode ? .dark : .light)) {
-                            Text("Privacy Policy")
+                            Text("Política de Privacidad")
                                 .foregroundColor(isDarkMode ? .white : .black)
                         }
                         
                         NavigationLink(destination: TermsOfServiceView().preferredColorScheme(isDarkMode ? .dark : .light)) {
-                            Text("Terms of Service")
+                            Text("Términos de Servicio")
                                 .foregroundColor(isDarkMode ? .white : .black)
                         }
                     }
@@ -126,13 +126,13 @@ struct SettingsView: View {
                 .listStyle(InsetGroupedListStyle())
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Settings")
+            .navigationTitle("Ajustes")
             .navigationBarTitleDisplayMode(.inline)
             // Aplicar el esquema de color a la vista de navegación
             .preferredColorScheme(isDarkMode ? .dark : .light)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("Listo") {
                         presentationMode.wrappedValue.dismiss()
                     }
                     .foregroundColor(.purple)

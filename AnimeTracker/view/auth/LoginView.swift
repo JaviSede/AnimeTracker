@@ -40,13 +40,13 @@ struct LoginView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
-                    Text("Track your anime journey")
+                    Text("Seguimiento de tu anime")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     
                     // Campos de texto para email y contraseña
                     VStack(spacing: 15) {
-                        TextField("Email", text: $email)
+                        TextField("Correo electrónico", text: $email)
                             .padding()
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(8)
@@ -54,7 +54,7 @@ struct LoginView: View {
                             .autocapitalization(.none)
                             .keyboardType(.emailAddress)
 
-                        SecureField("Password", text: $password)
+                        SecureField("Contraseña", text: $password)
                             .padding()
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(8)
@@ -65,7 +65,7 @@ struct LoginView: View {
                     // Botón de inicio de sesión
                     Button(action: {
                         if email.isEmpty || password.isEmpty {
-                            alertMessage = "Please enter both email and password"
+                            alertMessage = "Por favor, introduce correo y contraseña"
                             showAlert = true
                         } else {
                             authService.login(email: email, password: password)
@@ -79,7 +79,7 @@ struct LoginView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
                         } else {
-                            Text("Login")
+                            Text("Iniciar Sesión")
                                 .fontWeight(.bold)
                                 .frame(maxWidth: .infinity, minHeight: 50)
                                 .background(Color.purple)
@@ -130,7 +130,7 @@ struct LoginView: View {
                         Button(action: {
                             showingRegistration = true
                         }) {
-                            Text("Create Account")
+                            Text("Crear Cuenta")
                                 .font(.footnote)
                                 .foregroundColor(.gray)
                         }
@@ -139,10 +139,10 @@ struct LoginView: View {
                         
                         Button(action: {
                             // Acción para recuperar contraseña
-                            alertMessage = "Password recovery feature coming soon!"
+                            alertMessage = "¡Recuperación de contraseña próximamente!"
                             showAlert = true
                         }) {
-                            Text("Forgot Password?")
+                            Text("¿Olvidaste tu Contraseña?")
                                 .font(.footnote)
                                 .foregroundColor(.purple)
                         }

@@ -11,12 +11,12 @@ import Foundation // Needed for Codable, CaseIterable
 
 // Define the status of an anime in the user's library
 enum AnimeStatus: String, Codable, CaseIterable {
-    case watching = "Watching"
-    case completed = "Completed"
-    case planToWatch = "Plan to Watch"
-    case onHold = "On Hold"
-    case dropped = "Dropped"
-    case all = "All" // Used for filtering in UI, not for storing in SavedAnimeModel
+    case watching = "Viendo"
+    case completed = "Completado"
+    case planToWatch = "Pendiente"
+    case onHold = "En Pausa"
+    case dropped = "Abandonado"
+    case all = "Todos" // Used for filtering in UI, not for storing in SavedAnimeModel
 
     // Computed property to get the display name
     var displayName: String {
