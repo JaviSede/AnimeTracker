@@ -112,6 +112,10 @@ Si AnimeTracker te resulta útil, disfrutas usándolo o simplemente te gusta la 
 *   **Deja una estrella ⭐ en el repositorio:** Es una forma sencilla y rápida de mostrar tu aprecio y ayuda a dar visibilidad al proyecto.
 *   **Comparte el proyecto:** Habla de AnimeTracker con tus amigos, en redes sociales o en comunidades de anime. Cuanta más gente lo conozca, mejor.
 *   **Contribuye con código o ideas:** Como se mencionó en la sección anterior, tus contribuciones son muy bienvenidas.
+*   Si te gusta AnimeTracker y quieres apoyar su desarrollo, ¡puedes invitarme a un café en Ko-fi!
+
+[<img src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' alt='Cómprame un café en ko-fi.com' height='36'>](https://ko-fi.com/javisede07) 
+
 
 Próximamente podríamos habilitar plataformas de donaciones. ¡Gracias por tu interés y apoyo!
 
