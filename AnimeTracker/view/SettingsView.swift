@@ -65,7 +65,7 @@ struct SettingsView: View {
                     }
                     
                     Section(header: Text("Biblioteca").foregroundColor(isDarkMode ? .gray : .black)) {
-                        Toggle("Marcar como Completado Automáticamente", isOn: $autoMarkAsCompleted)
+                        Toggle("Completado Automáticamente", isOn: $autoMarkAsCompleted)
                             .foregroundColor(isDarkMode ? .white : .black)
                             .tint(.purple)
                             .onChange(of: autoMarkAsCompleted) { newValue in
@@ -97,7 +97,7 @@ struct SettingsView: View {
                         
                         Button(action: {
                             showingClearCacheAlert = true
-                        }) {
+                        }) { 
                             Label("Limpiar Caché", systemImage: "trash")
                                 .foregroundColor(.red)
                         }

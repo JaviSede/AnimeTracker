@@ -18,51 +18,93 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo negro
-                Color.black
-                    .ignoresSafeArea()
+                // Fondo con gradiente
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black, Color(red: 0.1, green: 0.0, blue: 0.2)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
                 
-                VStack(spacing: 20) {
-                    // Icono circular con texto "AT"
-                    Circle()
-                        .fill(Color.purple)
-                        .frame(width: 100, height: 100)
-                        .overlay(
-                            Text("AT")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                        )
-                    
-                    // Título "AnimeTracker"
-                    Text("AnimeTracker")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    
-                    Text("Seguimiento de tu anime")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    
-                    // Campos de texto para email y contraseña
+                VStack(spacing: 30) {
+                    // Logo mejorado
                     VStack(spacing: 15) {
-                        TextField("Correo electrónico", text: $email)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(8)
+                        ZStack {
+                            // Círculo exterior
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.7)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 120, height: 120)
+                                .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                            
+                            // Círculo interior con efecto de brillo
+                            Circle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 100, height: 100)
+                            
+                            // Texto "AT" con estilo mejorado
+                            Text("AT")
+                                .font(.system(size: 50, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                        }
+                        
+                        // Título con estilo mejorado
+                        Text("AnimeTracker")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
-                            .autocapitalization(.none)
-                            .keyboardType(.emailAddress)
-
-                        SecureField("Contraseña", text: $password)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(8)
-                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                        
+                        Text("Seguimiento de tu anime")
+                            .font(.system(size: 16, design: .rounded))
+                            .foregroundColor(.gray.opacity(0.8))
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.top, 20)
+                    
+                    // Campos de texto con diseño mejorado
+                    VStack(spacing: 20) {
+                        HStack {
+                            Image(systemName: "envelope.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            TextField("Correo electrónico", text: $email)
+                                .foregroundColor(.white)
+                                .autocapitalization(.none)
+                                .keyboardType(.emailAddress)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.purple.opacity(0.5), lineWidth: 1)
+                        )
 
-                    // Botón de inicio de sesión
+                        HStack {
+                            Image(systemName: "lock.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            SecureField("Contraseña", text: $password)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.purple.opacity(0.5), lineWidth: 1)
+                        )
+                    }
+                    .padding(.horizontal, 30)
+
+                    // Botón de inicio de sesión con efecto de sombra
                     Button(action: {
                         if email.isEmpty || password.isEmpty {
                             alertMessage = "Por favor, introduce correo y contraseña"
@@ -74,65 +116,56 @@ struct LoginView: View {
                         if authService.isLoading {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .frame(maxWidth: .infinity, minHeight: 50)
-                                .background(Color.purple)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+                                .frame(maxWidth: .infinity, minHeight: 55)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .cornerRadius(15)
+                                .shadow(color: Color.purple.opacity(0.5), radius: 5, x: 0, y: 3)
                         } else {
                             Text("Iniciar Sesión")
-                                .fontWeight(.bold)
-                                .frame(maxWidth: .infinity, minHeight: 50)
-                                .background(Color.purple)
+                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .frame(maxWidth: .infinity, minHeight: 55)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
                                 .foregroundColor(.white)
-                                .cornerRadius(8)
+                                .cornerRadius(15)
+                                .shadow(color: Color.purple.opacity(0.5), radius: 5, x: 0, y: 3)
                         }
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 30)
                     .disabled(authService.isLoading)
                     .alert(isPresented: $showAlert) {
                         Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                     }
 
-                    // Show error message from AuthService if present
+                    // Mensaje de error con estilo mejorado
                     if let errorMessage = authService.error {
                         Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                            .padding(.horizontal, 40)
+                            .foregroundColor(.red.opacity(0.8))
+                            .font(.system(size: 14))
+                            .padding(.horizontal, 30)
+                            .padding(.top, -10)
                     }
 
-                    #if DEBUG
-                    // Debug button - only for development
-                    Button(action: {
-                        // Force login for debugging
-                        let user = UserModel(
-                            id: UUID().uuidString,
-                            username: "TestUser",
-                            email: "test@example.com",
-                            password: "hashedpassword", // Required parameter
-                            profileImageUrl: nil,
-                            bio: "Test bio",
-                            joinDate: Date()
-                        )
-                        authService.currentUser = user
-                        authService.isAuthenticated = true
-                        authService.isLoading = false
-                    }) {
-                        Text("Debug: Force Login")
-                            .font(.caption)
-                            .foregroundColor(.gray.opacity(0.5))
-                    }
-                    .padding(.top, 20)
-                    #endif
-
-                    // Enlaces para crear cuenta y recuperar contraseña
+                    // Enlaces para crear cuenta y recuperar contraseña con diseño mejorado
                     HStack {
                         Button(action: {
                             showingRegistration = true
                         }) {
                             Text("Crear Cuenta")
-                                .font(.footnote)
-                                .foregroundColor(.gray)
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundColor(.white.opacity(0.8))
+                                .underline()
                         }
                         
                         Spacer()
@@ -143,11 +176,13 @@ struct LoginView: View {
                             showAlert = true
                         }) {
                             Text("¿Olvidaste tu Contraseña?")
-                                .font(.footnote)
-                                .foregroundColor(.purple)
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundColor(.purple.opacity(0.9))
+                                .underline()
                         }
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 30)
+                    .padding(.top, 10)
                 }
                 .padding(.vertical, 30)
             }

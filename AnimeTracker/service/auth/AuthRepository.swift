@@ -123,7 +123,7 @@ class AuthRepository: AuthRepositoryProtocol {
         do {
             userIDData = try KeychainManager.get(service: keychainService, account: keychainAccount)
         } catch KeychainManager.KeychainError.notFound {
-            return nil // No hay usuario logueado
+            return nil // No hay usuario logueado - esto no es un error
         } catch {
             throw AuthError.keychainError("Failed to get user ID from Keychain: \(error.localizedDescription)")
         }

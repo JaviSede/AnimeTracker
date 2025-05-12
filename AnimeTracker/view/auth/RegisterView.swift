@@ -19,58 +19,137 @@ struct RegisterView: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            // Fondo con gradiente
+            LinearGradient(
+                gradient: Gradient(colors: [Color.black, Color(red: 0.1, green: 0.0, blue: 0.2)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 30) {
-                    Text("Create Account")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top, 50)
+                    // Logo mejorado
+                    VStack(spacing: 15) {
+                        ZStack {
+                            // Círculo exterior
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.7)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 120, height: 120)
+                                .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                            
+                            // Círculo interior con efecto de brillo
+                            Circle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 100, height: 100)
+                            
+                            // Texto "AT" con estilo mejorado
+                            Text("AT")
+                                .font(.system(size: 50, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                        }
+                        
+                        // Título con estilo mejorado
+                        Text("Crear Cuenta")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                    }
+                    .padding(.top, 20)
                     
+                    // Campos de texto con diseño mejorado
                     VStack(spacing: 20) {
-                        TextField("Username", text: $username)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
+                        HStack {
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            TextField("Nombre de usuario", text: $username)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.purple.opacity(0.5), lineWidth: 1)
+                        )
                         
-                        TextField("Email", text: $email)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .autocapitalization(.none)
-                            .keyboardType(.emailAddress)
+                        HStack {
+                            Image(systemName: "envelope.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            TextField("Correo electrónico", text: $email)
+                                .foregroundColor(.white)
+                                .autocapitalization(.none)
+                                .keyboardType(.emailAddress)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.purple.opacity(0.5), lineWidth: 1)
+                        )
                         
-                        SecureField("Password", text: $password)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
+                        HStack {
+                            Image(systemName: "lock.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            SecureField("Contraseña", text: $password)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.purple.opacity(0.5), lineWidth: 1)
+                        )
                         
-                        SecureField("Confirm Password", text: $confirmPassword)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .onChange(of: confirmPassword) { _, newValue in
-                                passwordsMatch = password == newValue || newValue.isEmpty
-                            }
+                        HStack {
+                            Image(systemName: "lock.shield.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 30)
+                            
+                            SecureField("Confirmar Contraseña", text: $confirmPassword)
+                                .foregroundColor(.white)
+                                .onChange(of: confirmPassword) { _, newValue in
+                                    passwordsMatch = password == newValue || newValue.isEmpty
+                                }
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(passwordsMatch ? Color.purple.opacity(0.5) : Color.red.opacity(0.7), lineWidth: 1)
+                        )
                         
                         if !passwordsMatch {
-                            Text("Passwords do not match")
-                                .foregroundColor(.red)
-                                .font(.caption)
+                            Text("Las contraseñas no coinciden")
+                                .foregroundColor(.red.opacity(0.8))
+                                .font(.system(size: 14))
+                                .padding(.top, -10)
                         }
                         
                         if let error = authService.error {
                             Text(error)
-                                .foregroundColor(.red)
-                                .font(.caption)
+                                .foregroundColor(.red.opacity(0.8))
+                                .font(.system(size: 14))
+                                .padding(.top, -10)
                         }
                         
+                        // Botón de registro con efecto de sombra
                         Button(action: {
                             if password == confirmPassword {
                                 authService.register(username: username, email: email, password: password)
@@ -81,29 +160,44 @@ struct RegisterView: View {
                             if authService.isLoading {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.purple)
-                                    .cornerRadius(10)
+                                    .frame(maxWidth: .infinity, minHeight: 55)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .cornerRadius(15)
+                                    .shadow(color: Color.purple.opacity(0.5), radius: 5, x: 0, y: 3)
                             } else {
-                                Text("Register")
-                                    .font(.headline)
+                                Text("Registrarse")
+                                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                                    .frame(maxWidth: .infinity, minHeight: 55)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
                                     .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.purple)
-                                    .cornerRadius(10)
+                                    .cornerRadius(15)
+                                    .shadow(color: Color.purple.opacity(0.5), radius: 5, x: 0, y: 3)
                             }
                         }
                         .disabled(authService.isLoading || username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty || !passwordsMatch)
                         
+                        // Enlace para volver a iniciar sesión
                         Button(action: {
                             dismiss()
                         }) {
-                            Text("Already have an account? Sign in")
-                                .font(.subheadline)
-                                .foregroundColor(.purple)
+                            Text("¿Ya tienes una cuenta? Inicia sesión")
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundColor(.purple.opacity(0.9))
+                                .underline()
                         }
+                        .padding(.top, 10)
                     }
                     .padding(.horizontal, 30)
                     
@@ -119,8 +213,16 @@ struct RegisterView: View {
                 }) {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.purple)
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(8)
+                        .background(Color.white.opacity(0.1))
+                        .clipShape(Circle())
                 }
             }
         }
     }
+}
+
+#Preview {
+    RegisterView().environmentObject(AuthService())
 }

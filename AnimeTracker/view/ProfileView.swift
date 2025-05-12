@@ -235,7 +235,7 @@ struct ProfileOptionsSectionView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            OptionButton(title: "Editar perfil;", icon: "pencil") {
+            OptionButton(title: "Editar perfil", icon: "pencil") {
                 showingEditProfile = true
             }
             
@@ -249,7 +249,7 @@ struct ProfileOptionsSectionView: View {
             
             Divider().background(Color.gray.opacity(0.5)).padding(.horizontal)
             
-            OptionButton(title: "Logout", icon: "arrow.right.square", role: .destructive) {
+            OptionButton(title: "Cerrar Sesión", icon: "arrow.right.square", role: .destructive) {
                 authService.logout()
             }
         }

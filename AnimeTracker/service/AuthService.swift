@@ -42,33 +42,40 @@ class AuthService: ObservableObject {
     func loadCurrentUser() {
         guard let repository = repository else {
             print("AuthService: Repository not available yet for loading user.")
-            // Optionally set an error state here
-            // self.error = "Initialization error."
             return
         }
-
+    
         isLoading = true
         error = nil
-
+    
         Task {
             do {
+                // Intenta obtener el usuario actual
                 let user = try await repository.getCurrentUser()
+                
                 await MainActor.run {
                     self.currentUser = user
-                    self.isAuthenticated = (user != nil) // More robust check
+                    self.isAuthenticated = (user != nil)
                     self.isLoading = false
-                    print("AuthService: Current user loaded: \(user?.email ?? "None")") // Debug log
+                    self.error = nil
+                    print("AuthService: Current user loaded: \(user?.email ?? "None")")
                 }
             } catch {
                 await MainActor.run {
-                    // Log the actual error for debugging
+                    // Registra el error para depuración
                     print("AuthService: Failed to load current user - Error: \(error)")
-                    if let authError = error as? AuthError, case .keychainError(let reason) = authError {
-                        self.error = "Error de Keychain: \(reason)" // Use localized description if available
+                    
+                    // Importante: No mostrar el error de Keychain al usuario cuando es la primera vez
+                    // que abre la app o no hay usuario conectado
+                    if error.localizedDescription.contains("keychain") || 
+                       error.localizedDescription.contains("Keychain") {
+                        // Silenciar este error específico - es normal cuando no hay usuario
+                        self.error = nil
                     } else {
                         self.error = "Error al cargar usuario: \(error.localizedDescription)"
                     }
-                    self.currentUser = nil // Ensure user is nil on error
+                    
+                    self.currentUser = nil
                     self.isAuthenticated = false
                     self.isLoading = false
                 }
