@@ -2,11 +2,7 @@
 
 <!-- Aquí irá el logo generado -->
 <p align="center">
-<<<<<<< HEAD
   <img src="./images_readme/AnimeTracker_logo.png" alt="AnimeTracker Logo" width="150"/>
-=======
-  <img src="./placeholder_logo.png" alt="AnimeTracker Logo" width="150"/>
->>>>>>> 934a6dee676cb92b33d028b7e2497eba846f3bca
 </p>
 
 AnimeTracker es una aplicación para iOS, desarrollada en Swift, que te permite llevar un control exhaustivo de todas tus series de anime. Con esta herramienta, podrás organizar fácilmente los animes que estás viendo actualmente, aquellos que ya has completado y los que tienes en tu lista de pendientes para ver en el futuro. Su interfaz, moderna e intuitiva, junto con funcionalidades pensadas específicamente para la comunidad otaku, transforman el seguimiento de tu progreso en una experiencia sencilla y estéticamente agradable.
@@ -28,7 +24,6 @@ AnimeTracker se enfoca en proporcionar una experiencia de usuario fluida y compl
 
 ## 🖼️ Capturas de Pantalla
 
-<<<<<<< HEAD
 <p align="center">
   <img src="./images_readme/screenshot_home.png" alt="Pantalla de Inicio" width="250"/>
   <br/><em>Pantalla de Inicio</em><br/><br/>
@@ -38,11 +33,6 @@ AnimeTracker se enfoca en proporcionar una experiencia de usuario fluida y compl
   <br/><em>Pantalla de Biblioteca</em><br/><br/>
   <img src="./images_readme/screenshot_perfil.png" alt="Pantalla de Perfil" width="250"/>
   <br/><em>Pantalla de Perfil</em><br/>
-=======
-<!-- Aquí se añadirán las capturas de pantalla de la aplicación -->
-<p align="center">
-  <em>Próximamente se añadirán capturas de pantalla para mostrar la aplicación en acción.</em>
->>>>>>> 934a6dee676cb92b33d028b7e2497eba846f3bca
 </p>
 
 ## 🛠️ Tecnologías Utilizadas
