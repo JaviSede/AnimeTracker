@@ -1,112 +1,115 @@
-🎌 AnimeTracker · Tu compañero para seguir tus animes favoritos
-AnimeTracker es una aplicación iOS desarrollada en Swift que permite a los fanáticos del anime llevar un control completo de sus series: qué están viendo, qué han terminado, y qué quieren ver más adelante. Con una interfaz moderna y funcionalidades pensadas para la comunidad otaku, AnimeTracker hace que seguir tu progreso nunca haya sido tan fácil (¡ni tan estético!).
+# 🎌 AnimeTracker: Tu compañero para seguir tus animes favoritos
 
-[![Plataforma](https://img.shields.io/badge/Plataforma-iOS-blue)]()
-[![Lenguaje](https://img.shields.io/badge/Swift-5.9-orange)]()
-[![UI](https://img.shields.io/badge/SwiftUI-%F0%9F%93%BA-green)]()
-[![Persistencia](https://img.shields.io/badge/SwiftData-%F0%9F%92%BE-yellow)]()
-[![Seguridad](https://img.shields.io/badge/Keychain%20%2B%20CryptoKit-%F0%9F%94%91-lightgrey)]()
-[![Arquitectura](https://img.shields.io/badge/MVVM-%F0%9F%92%A1-blueviolet)]()
-[![Licencia](https://img.shields.io/badge/Licencia-MIT-brightgreen)]()
-[![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20%F0%9F%9A%A7-red)]()
+<!-- Aquí irá el logo generado -->
+<p align="center">
+  <img src="./placeholder_logo.png" alt="AnimeTracker Logo" width="150"/>
+</p>
 
-✨ Características Destacadas
-📚 Gestión de Biblioteca Personal
-Organiza tus animes en listas personalizadas: Viendo, Completado, En espera o Abandonado.
+AnimeTracker es una aplicación para iOS, desarrollada en Swift, que te permite llevar un control exhaustivo de todas tus series de anime. Con esta herramienta, podrás organizar fácilmente los animes que estás viendo actualmente, aquellos que ya has completado y los que tienes en tu lista de pendientes para ver en el futuro. Su interfaz, moderna e intuitiva, junto con funcionalidades pensadas específicamente para la comunidad otaku, transforman el seguimiento de tu progreso en una experiencia sencilla y estéticamente agradable.
 
-📺 Seguimiento de Episodios
-Marca episodios vistos y sigue tu avance con estadísticas claras y motivadoras.
+<p align="center">
+  <img src="https://img.shields.io/badge/Plataforma-iOS-blue" alt="Plataforma iOS"/>
+  <img src="https://img.shields.io/badge/Swift-5.9-orange" alt="Swift 5.9"/>
+  <img src="https://img.shields.io/badge/SwiftUI-%F0%9F%93%BA-green" alt="SwiftUI"/>
+  <img src="https://img.shields.io/badge/SwiftData-%F0%9F%92%BE-yellow" alt="SwiftData"/>
+  <img src="https://img.shields.io/badge/Seguridad-Keychain%20%2B%20CryptoKit-%F0%9F%94%91-lightgrey" alt="Seguridad"/>
+  <img src="https://img.shields.io/badge/Arquitectura-MVVM-blueviolet" alt="Arquitectura MVVM"/>
+  <img src="https://img.shields.io/badge/Licencia-MIT-brightgreen" alt="Licencia MIT"/>
+  <img src="https://img.shields.io/badge/Estado-En%20Desarrollo%20%F0%9F%9A%A7-red" alt="Estado En Desarrollo"/>
+</p>
 
-🔍 Exploración de Nuevos Animes (Próximamente)
-Futura integración con APIs de anime para descubrir nuevas series directamente desde la app.
+## ✨ Características Destacadas
 
-🔐 Autenticación Segura
-Inicio de sesión y registro protegidos por Keychain y almacenamiento seguro de credenciales.
+AnimeTracker se enfoca en proporcionar una experiencia de usuario fluida y completa. Podrás gestionar tu **biblioteca personal de animes**, organizándolos en listas personalizadas como "Viendo", "Completado", "En espera" o "Abandonado". Además, la aplicación facilita el **seguimiento detallado de episodios**, permitiéndote marcar los que ya has visto y visualizar tu avance mediante estadísticas claras y motivadoras. Para mantener tu información segura, AnimeTracker implementa un sistema de **autenticación robusto**, con inicio de sesión y registro protegidos mediante Keychain y almacenamiento seguro de credenciales. Todo esto se complementa con un **perfil de usuario personalizado**, desde donde podrás visualizar tu progreso, editar tu información y gestionar tu biblioteca de forma centralizada. La interfaz, diseñada con SwiftUI, es **intuitiva y moderna**, ofreciendo una experiencia visual minimalista y agradable.
 
-👤 Perfil de Usuario Personalizado
-Visualiza tu progreso, edita tu información y gestiona tu biblioteca desde un solo lugar.
+## 🖼️ Capturas de Pantalla
 
-🧭 Interfaz Intuitiva y Moderna
-Diseñada con SwiftUI para ofrecer una experiencia visual fluida y minimalista.
+<!-- Aquí se añadirán las capturas de pantalla de la aplicación -->
+<p align="center">
+  <em>Próximamente se añadirán capturas de pantalla para mostrar la aplicación en acción.</em>
+</p>
 
-🛠️ Tecnologías Utilizadas
-Categoría	Tecnología
-Plataforma	iOS
-Lenguaje	Swift
-UI Framework	SwiftUI
-Persistencia	SwiftData
-Seguridad	Keychain, CryptoKit
-Arquitectura	MVVM + Servicios
+## 🛠️ Tecnologías Utilizadas
 
-📂 Estructura del Proyecto
-plaintext
-Copiar
-Editar
+El desarrollo de AnimeTracker se apoya en un conjunto de tecnologías modernas y eficientes, seleccionadas para ofrecer el mejor rendimiento y experiencia en la plataforma iOS. El lenguaje principal de desarrollo es **Swift**, aprovechando su seguridad y velocidad. La interfaz de usuario está construida enteramente con **SwiftUI**, lo que permite un diseño declarativo, moderno y adaptable. Para la persistencia de datos, se utiliza **SwiftData**, el framework más reciente de Apple para la gestión de datos en aplicaciones Swift. La seguridad es un pilar fundamental, por lo que se emplean **Keychain** para el almacenamiento seguro de credenciales y **CryptoKit** para operaciones criptográficas como el hashing de contraseñas. La arquitectura de la aplicación sigue el patrón **MVVM (Modelo-Vista-VistaModelo)**, complementado con una capa de Servicios para desacoplar la lógica de negocio y mejorar la mantenibilidad y escalabilidad del código.
+
+## 🗺️ Roadmap del Proyecto
+
+AnimeTracker es un proyecto en continuo desarrollo con el objetivo de ofrecer cada vez más funcionalidades útiles para los aficionados al anime. Actualmente, nos encontramos trabajando en varias mejoras y nuevas características. Una de las prioridades es la **integración con APIs de anime externas**, lo que permitirá a los usuarios descubrir nuevas series, obtener información detallada (sinopsis, géneros, estudios, fechas de emisión) y sincronizar datos directamente desde la aplicación. También planeamos mejorar las **opciones de personalización del perfil** y las estadísticas de visualización. A largo plazo, exploraremos la posibilidad de añadir funcionalidades sociales, como la opción de compartir listas o recomendaciones con amigos. ¡Mantente atento a las próximas actualizaciones!
+
+## 📂 Estructura del Proyecto
+
+La organización del código fuente de AnimeTracker está diseñada para ser clara y facilitar tanto el mantenimiento como la colaboración. A continuación, se describe la estructura principal de directorios y su propósito:
+
+```plaintext
 AnimeTracker/
-├── AnimeTrackerApp.swift        # Punto de entrada
-├── Assets.xcassets/             # Recursos gráficos
-├── ContentView.swift            # Vista principal
-├── Diagramas/                   # Diagramas UML
-├── model/                       # Modelos de datos
-├── service/                     # Lógica de negocio
-│   └── auth/                    # Módulo de autenticación
-└── view/                        # Vistas SwiftUI
-    └── auth/                    # Vistas de login/registro
-🚀 Cómo Ejecutar el Proyecto
-Clona este repositorio:
+├── AnimeTrackerApp.swift        # Punto de entrada de la aplicación y configuración inicial.
+├── Assets.xcassets/             # Contiene todos los recursos gráficos (iconos, imágenes, colores).
+├── ContentView.swift            # Vista principal o contenedor inicial de la interfaz de usuario.
+├── Diagramas/                   # Diagramas UML u otros documentos visuales de diseño.
+├── model/                       # Definiciones de los modelos de datos (Entidades de SwiftData).
+├── service/                     # Lógica de negocio y servicios (ej. autenticación, API).
+│   └── auth/                    # Módulo específico para la autenticación de usuarios.
+└── view/                        # Componentes de la interfaz de usuario construidos con SwiftUI.
+    └── auth/                    # Vistas relacionadas con el login y el registro de usuarios.
+```
 
-bash
-Copiar
-Editar
+Esta estructura modular ayuda a mantener el código organizado y facilita la comprensión del flujo de datos y responsabilidades dentro de la aplicación.
+
+## 🚀 Cómo Ejecutar el Proyecto
+
+Para poner en marcha AnimeTracker en tu entorno de desarrollo local, necesitarás seguir unos sencillos pasos. Primero, asegúrate de tener Xcode instalado y actualizado en tu Mac. Luego, clona este repositorio en tu máquina local utilizando el siguiente comando en tu terminal:
+
+```bash
+cd ruta/a/tu/directorio/de/proyectos
 git clone https://github.com/tu-usuario/AnimeTracker.git
+```
+
+Una vez clonado el repositorio, navega hasta la carpeta del proyecto:
+
+```bash
 cd AnimeTracker
-Abre el proyecto en Xcode
-Ejecuta AnimeTracker.xcodeproj o el workspace si usas paquetes.
+```
 
-Configura tu entorno
+Abre el archivo `AnimeTracker.xcodeproj` (o el archivo `.xcworkspace` si el proyecto utiliza CocoaPods o Swift Package Manager para dependencias externas) con Xcode. Dentro de Xcode, selecciona un simulador de iOS o conecta un dispositivo físico compatible. Finalmente, haz clic en el botón ▶️ (Build and Run) en la barra de herramientas de Xcode. Esto compilará el proyecto y ejecutará la aplicación AnimeTracker en el dispositivo o simulador seleccionado, permitiéndote verla en acción.
 
-Verifica que Xcode esté actualizado.
+## 🔐 Seguridad y Autenticación
 
-Usa un simulador iOS o dispositivo físico.
+La protección de la información del usuario es una prioridad en AnimeTracker. Para ello, se han implementado varias medidas de seguridad. Las contraseñas de los usuarios se manejan de forma segura mediante el uso de **CryptoKit**, aplicando un hash SHA256 junto con un "salt" único para cada contraseña antes de su almacenamiento, lo que previene ataques de diccionario o tablas precalculadas. Las credenciales de acceso, una vez verificadas, se almacenan de forma segura en el **Keychain** del dispositivo, un almacén cifrado proporcionado por iOS para datos sensibles. La gestión de la sesión y el proceso de autenticación están encapsulados y desacoplados del resto de la aplicación a través de un `AuthService` y un `AuthRepository`, lo que centraliza la lógica de seguridad y facilita su mantenimiento y auditoría. Toda la lógica relacionada con la autenticación y la seguridad de las credenciales se encuentra organizada dentro de la carpeta `service/auth/` del proyecto, siendo el archivo `KeychainManager.swift` una pieza clave en la interacción con el Keychain.
 
-Ejecuta la app
-Haz clic en ▶️ Build and Run para ver AnimeTracker en acción.
+## 🤝 Contribuciones
 
-🔐 Seguridad y Autenticación
-La app protege la información del usuario mediante:
+¡Tu colaboración es muy valiosa para hacer de AnimeTracker una aplicación aún mejor! Si tienes ideas, encuentras errores o quieres añadir nuevas funcionalidades, te animamos a contribuir. El proceso es sencillo: primero, realiza un "fork" de este repositorio a tu propia cuenta de GitHub. Luego, crea una nueva rama en tu fork para trabajar en tus cambios; es recomendable usar un nombre descriptivo para la rama, por ejemplo:
 
-Hashing de contraseñas con CryptoKit (SHA256 + salt).
+```bash
+git checkout -b feature/nombre-de-tu-funcionalidad
+```
 
-Almacenamiento seguro de credenciales mediante Keychain.
+Realiza todas las modificaciones y mejoras que consideres necesarias en tu rama. Una vez que estés satisfecho con tus cambios, haz "commit" de ellos con un mensaje claro que describa lo que has hecho:
 
-Gestión de sesión y autenticación desacoplada a través de AuthService y AuthRepository.
+```bash
+git commit -m "Agrega [descripción de la nueva funcionalidad o arreglo]"
+```
 
-Toda la lógica relacionada se encuentra en la carpeta service/auth/, destacando el archivo KeychainManager.swift.
+Sube tu rama a tu repositorio en GitHub:
 
-🤝 Contribuciones
-¡Las contribuciones son bienvenidas! Si quieres aportar:
+```bash
+git push origin feature/nombre-de-tu-funcionalidad
+```
 
-Haz un fork del proyecto.
+Finalmente, abre un "Pull Request" desde tu rama hacia la rama principal (`main` o `develop`) del repositorio original. En la descripción del Pull Request, detalla los cambios que has realizado y por qué son importantes. Revisaremos tu contribución lo antes posible.
 
-Crea una nueva rama:
+## 💖 Apoya el Proyecto
 
-bash
-Copiar
-Editar
-git checkout -b feature/mi-nueva-funcionalidad
-Realiza tus cambios y haz commit:
+Si AnimeTracker te resulta útil, disfrutas usándolo o simplemente te gusta la idea detrás del proyecto, ¡considera apoyar su desarrollo! Tu apoyo nos ayuda a dedicar más tiempo y recursos para mejorar la aplicación, añadir nuevas características y mantenerla actualizada. Aunque actualmente no tenemos un sistema de donaciones directas integrado, puedes mostrar tu apoyo de las siguientes maneras:
 
-bash
-Copiar
-Editar
-git commit -m "Agrega nueva funcionalidad"
-Haz push de tu rama:
+*   **Deja una estrella ⭐ en el repositorio:** Es una forma sencilla y rápida de mostrar tu aprecio y ayuda a dar visibilidad al proyecto.
+*   **Comparte el proyecto:** Habla de AnimeTracker con tus amigos, en redes sociales o en comunidades de anime. Cuanta más gente lo conozca, mejor.
+*   **Contribuye con código o ideas:** Como se mencionó en la sección anterior, tus contribuciones son muy bienvenidas.
 
-bash
-Copiar
-Editar
-git push origin feature/mi-nueva-funcionalidad
-Abre un Pull Request explicando tus cambios.
+Próximamente podríamos habilitar plataformas de donaciones. ¡Gracias por tu interés y apoyo!
 
-🧡 ¿Te gusta el proyecto?
-No olvides dejar una ⭐ en el repositorio si te parece útil o interesante. ¡Gracias por tu apoyo!
+## 📜 Licencia
+
+Este proyecto se distribuye bajo la Licencia MIT. Puedes encontrar una copia completa de la licencia en el archivo `LICENSE` del repositorio. En resumen, eres libre de usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o vender copias del software, siempre y cuando incluyas el aviso de copyright y el aviso de permiso en todas las copias o porciones sustanciales del software.
+
