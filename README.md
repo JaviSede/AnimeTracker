@@ -1,93 +1,112 @@
-# AnimeTracker
+🎌 AnimeTracker · Tu compañero para seguir tus animes favoritos
+AnimeTracker es una aplicación iOS desarrollada en Swift que permite a los fanáticos del anime llevar un control completo de sus series: qué están viendo, qué han terminado, y qué quieren ver más adelante. Con una interfaz moderna y funcionalidades pensadas para la comunidad otaku, AnimeTracker hace que seguir tu progreso nunca haya sido tan fácil (¡ni tan estético!).
 
-AnimeTracker es una aplicación iOS diseñada para ayudar a los usuarios a realizar un seguimiento de las series de anime que están viendo, han visto o planean ver. Permite a los usuarios gestionar su biblioteca personal de anime, descubrir nuevas series y mantener un registro de su progreso.
+[![Plataforma](https://img.shields.io/badge/Plataforma-iOS-blue)]()
+[![Lenguaje](https://img.shields.io/badge/Swift-5.9-orange)]()
+[![UI](https://img.shields.io/badge/SwiftUI-%F0%9F%93%BA-green)]()
+[![Persistencia](https://img.shields.io/badge/SwiftData-%F0%9F%92%BE-yellow)]()
+[![Seguridad](https://img.shields.io/badge/Keychain%20%2B%20CryptoKit-%F0%9F%94%91-lightgrey)]()
+[![Arquitectura](https://img.shields.io/badge/MVVM-%F0%9F%92%A1-blueviolet)]()
+[![Licencia](https://img.shields.io/badge/Licencia-MIT-brightgreen)]()
+[![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20%F0%9F%9A%A7-red)]()
 
-## Características Principales
+✨ Características Destacadas
+📚 Gestión de Biblioteca Personal
+Organiza tus animes en listas personalizadas: Viendo, Completado, En espera o Abandonado.
 
-*   **Gestión de Biblioteca Personal**: Los usuarios pueden añadir animes a diferentes listas (viendo, completado, en espera, abandonado).
-*   **Seguimiento de Progreso**: Permite marcar episodios vistos y llevar un control del avance en cada serie.
-*   **Descubrimiento de Anime**: (Funcionalidad futura) Integración con APIs de bases de datos de anime para buscar y añadir nuevas series.
-*   **Autenticación Segura**: Sistema de registro e inicio de sesión de usuarios con almacenamiento seguro de credenciales utilizando Keychain.
-*   **Perfil de Usuario**: Cada usuario tiene un perfil donde puede ver sus estadísticas y gestionar su información.
-*   **Interfaz Intuitiva**: Diseño de interfaz de usuario amigable y fácil de navegar, desarrollada con SwiftUI.
+📺 Seguimiento de Episodios
+Marca episodios vistos y sigue tu avance con estadísticas claras y motivadoras.
 
-## Requisitos Técnicos
+🔍 Exploración de Nuevos Animes (Próximamente)
+Futura integración con APIs de anime para descubrir nuevas series directamente desde la app.
 
-*   **Plataforma**: iOS
-*   **Lenguaje**: Swift
-*   **UI Framework**: SwiftUI
-*   **Persistencia de Datos**: SwiftData para la base de datos local.
-*   **Autenticación**: Gestión de sesión de usuario mediante Keychain para mayor seguridad.
-*   **Dependencias**: CryptoKit (para hashing de contraseñas).
+🔐 Autenticación Segura
+Inicio de sesión y registro protegidos por Keychain y almacenamiento seguro de credenciales.
 
-## Estructura del Proyecto
+👤 Perfil de Usuario Personalizado
+Visualiza tu progreso, edita tu información y gestiona tu biblioteca desde un solo lugar.
 
-El proyecto sigue una estructura organizada para facilitar el desarrollo y mantenimiento:
+🧭 Interfaz Intuitiva y Moderna
+Diseñada con SwiftUI para ofrecer una experiencia visual fluida y minimalista.
 
-```
+🛠️ Tecnologías Utilizadas
+Categoría	Tecnología
+Plataforma	iOS
+Lenguaje	Swift
+UI Framework	SwiftUI
+Persistencia	SwiftData
+Seguridad	Keychain, CryptoKit
+Arquitectura	MVVM + Servicios
+
+📂 Estructura del Proyecto
+plaintext
+Copiar
+Editar
 AnimeTracker/
-├── AnimeTrackerApp.swift       # Punto de entrada de la aplicación
-├── Assets.xcassets/          # Recursos gráficos (iconos, imágenes)
-├── ContentView.swift           # Vista principal inicial
-├── Diagramas/                  # Diagramas UML (clases, flujo, etc.)
-├── Preview Content/            # Recursos para previews de SwiftUI
-├── model/                      # Modelos de datos (SwiftData entities, structs)
-│   ├── AnimeStats.swift
-│   ├── AnimeStatus.swift
-│   ├── StreamingService.swift
-│   ├── User.swift
-│   ├── UserLibrary.swift
-│   └── UserModel.swift         # Modelo de usuario para SwiftData
-├── service/                    # Lógica de negocio y servicios
-│   ├── AnimeService.swift      # Servicio para la gestión de animes
-│   ├── AuthService.swift       # Servicio de autenticación (ObservableObject)
-│   └── auth/                   # Componentes específicos de autenticación
-│       ├── AuthRepository.swift # Repositorio para operaciones de autenticación
-│       ├── AuthValidator.swift  # Validadores para datos de entrada
-│       ├── KeychainManager.swift# Gestor para interactuar con Keychain
-│       └── Validator.swift      # Protocolo base para validadores
-└── view/                       # Vistas de la interfaz de usuario (SwiftUI)
-    ├── AnimeDetailView.swift
-    ├── AnimeStatusSelectionView.swift
-    ├── EditProfileView.swift
-    ├── HomeView.swift
-    ├── LibraryView.swift
-    ├── MainTabView.swift       # Vista principal con pestañas
-    ├── ProfileView.swift
-    ├── SearchView.swift
-    ├── SettingsView.swift
-    └── auth/                   # Vistas de autenticación
-        ├── LoginView.swift
-        └── RegisterView.swift
-```
+├── AnimeTrackerApp.swift        # Punto de entrada
+├── Assets.xcassets/             # Recursos gráficos
+├── ContentView.swift            # Vista principal
+├── Diagramas/                   # Diagramas UML
+├── model/                       # Modelos de datos
+├── service/                     # Lógica de negocio
+│   └── auth/                    # Módulo de autenticación
+└── view/                        # Vistas SwiftUI
+    └── auth/                    # Vistas de login/registro
+🚀 Cómo Ejecutar el Proyecto
+Clona este repositorio:
 
-## Instalación y Ejecución
+bash
+Copiar
+Editar
+git clone https://github.com/tu-usuario/AnimeTracker.git
+cd AnimeTracker
+Abre el proyecto en Xcode
+Ejecuta AnimeTracker.xcodeproj o el workspace si usas paquetes.
 
-1.  **Clonar el Repositorio**:
-    ```bash
-    git clone https://github.com/tu-usuario/AnimeTracker.git
-    cd AnimeTracker
-    ```
-2.  **Abrir en Xcode**:
-    Abre el archivo `AnimeTracker.xcodeproj` o el workspace si existe.
-3.  **Configurar el Entorno**:
-    *   Asegúrate de tener Xcode actualizado y configurado para desarrollo iOS.
-    *   Selecciona un simulador de iOS o un dispositivo físico conectado.
-4.  **Ejecutar la Aplicación**:
-    Presiona el botón de "Play" (Build and Run) en Xcode.
+Configura tu entorno
 
-## Sistema de Autenticación y Seguridad
+Verifica que Xcode esté actualizado.
 
-La aplicación implementa un sistema de registro e inicio de sesión para los usuarios. Las contraseñas se almacenan hasheadas utilizando SHA256 con salt para mayor seguridad. La gestión de la sesión del usuario (ID de usuario) se realiza a través de **Keychain**, lo que proporciona un almacenamiento seguro y persistente para esta información sensible, en lugar de utilizar `UserDefaults`.
+Usa un simulador iOS o dispositivo físico.
 
-El archivo `KeychainManager.swift` encapsula la lógica para guardar, obtener, actualizar y eliminar datos de Keychain. `AuthRepository.swift` utiliza este gestor para manejar el ID del usuario durante el login, registro y cierre de sesión.
+Ejecuta la app
+Haz clic en ▶️ Build and Run para ver AnimeTracker en acción.
 
-## Contribuciones
+🔐 Seguridad y Autenticación
+La app protege la información del usuario mediante:
 
-Las contribuciones son bienvenidas. Si deseas contribuir al proyecto, por favor:
+Hashing de contraseñas con CryptoKit (SHA256 + salt).
 
-1.  Haz un fork del repositorio.
-2.  Crea una nueva rama para tu feature (`git checkout -b feature/nueva-funcionalidad`).
-3.  Realiza tus cambios y haz commit (`git commit -am 'Añade nueva funcionalidad'`).
-4.  Sube tus cambios a la rama (`git push origin feature/nueva-funcionalidad`).
-5.  Abre un Pull Request.
+Almacenamiento seguro de credenciales mediante Keychain.
+
+Gestión de sesión y autenticación desacoplada a través de AuthService y AuthRepository.
+
+Toda la lógica relacionada se encuentra en la carpeta service/auth/, destacando el archivo KeychainManager.swift.
+
+🤝 Contribuciones
+¡Las contribuciones son bienvenidas! Si quieres aportar:
+
+Haz un fork del proyecto.
+
+Crea una nueva rama:
+
+bash
+Copiar
+Editar
+git checkout -b feature/mi-nueva-funcionalidad
+Realiza tus cambios y haz commit:
+
+bash
+Copiar
+Editar
+git commit -m "Agrega nueva funcionalidad"
+Haz push de tu rama:
+
+bash
+Copiar
+Editar
+git push origin feature/mi-nueva-funcionalidad
+Abre un Pull Request explicando tus cambios.
+
+🧡 ¿Te gusta el proyecto?
+No olvides dejar una ⭐ en el repositorio si te parece útil o interesante. ¡Gracias por tu apoyo!
