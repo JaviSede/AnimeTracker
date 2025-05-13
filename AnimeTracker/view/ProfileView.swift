@@ -229,31 +229,65 @@ struct StatSummaryView: View {
 
 // --- Profile Options Section View ---
 struct ProfileOptionsSectionView: View {
-    @EnvironmentObject var authService: AuthService
     @Binding var showingEditProfile: Bool
+    @EnvironmentObject var authService: AuthService
     @AppStorage("isDarkMode") private var isDarkMode = true
+    @State private var showingSettings = false
+    @State private var showingExportDialog = false
+    @State private var showingLogoutAlert = false
     
     var body: some View {
-        VStack(spacing: 10) {
-            OptionButton(title: "Editar perfil", icon: "pencil") {
-                showingEditProfile = true
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Opciones")
+                .font(.headline)
+                .foregroundColor(isDarkMode ? .white : .black)
+                .padding(.horizontal)
+            
+            VStack(spacing: 10) {
+                OptionButton(title: "Editar perfil", icon: "pencil") {
+                    showingEditProfile = true
+                }
+                
+                OptionButton(title: "Configuración", icon: "gear") {
+                    showingSettings = true
+                }
+                
+                OptionButton(title: "Exportar datos", icon: "square.and.arrow.up") {
+                    showingExportDialog = true
+                }
+                
+                OptionButton(title: "Cerrar sesión", icon: "arrow.right.square", role: .destructive) {
+                    showingLogoutAlert = true
+                }
             }
-            
-            OptionButton(title: "Exportar biblioteca", icon: "square.and.arrow.up") {
-                print("Export Library tapped")
+            .padding(.horizontal)
+        }
+        .padding()
+        .background(isDarkMode ? Color.black.opacity(0.3) : Color.white.opacity(0.7))
+        .cornerRadius(15)
+        .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), radius: 3, x: 0, y: 2)
+        .padding(.horizontal)
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(isDarkMode: $isDarkMode)
+        }
+        .alert("Exportar Datos", isPresented: $showingExportDialog) {
+            Button("Cancelar", role: .cancel) { }
+            Button("Exportar") {
+                // Aquí iría la lógica de exportación
+                // Por ahora solo mostramos un mensaje de éxito
+                print("Exportando datos...")
             }
-            
-            OptionButton(title: "Configuración", icon: "gear") {
-                print("Settings tapped")
-            }
-            
-            Divider().background(Color.gray.opacity(0.5)).padding(.horizontal)
-            
-            OptionButton(title: "Cerrar Sesión", icon: "arrow.right.square", role: .destructive) {
+        } message: {
+            Text("¿Deseas exportar todos tus datos de anime? Esto generará un archivo que podrás guardar.")
+        }
+        .alert("Cerrar Sesión", isPresented: $showingLogoutAlert) {
+            Button("Cancelar", role: .cancel) { }
+            Button("Cerrar Sesión", role: .destructive) {
                 authService.logout()
             }
+        } message: {
+            Text("¿Estás seguro de que deseas cerrar sesión?")
         }
-        .padding(.horizontal) // Add horizontal padding to the options section
     }
 }
 
@@ -268,20 +302,56 @@ struct OptionButton: View {
     var body: some View {
         Button(role: role, action: action) {
             HStack {
-                Image(systemName: icon)
-                    .frame(width: 25, alignment: .center) // Align icons
+                // Icono con fondo circular
+                ZStack {
+                    Circle()
+                        .fill(role == .destructive 
+                              ? Color.red.opacity(0.2) 
+                              : Color.purple.opacity(0.2))
+                        .frame(width: 36, height: 36)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(role == .destructive ? .red : .purple)
+                }
+                
+                // Título con espacio adicional
                 Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .padding(.leading, 8)
+                
                 Spacer()
-                if role == nil { // Don't show chevron for destructive actions
+                
+                // Flecha de navegación (excepto para botones destructivos)
+                if role == nil {
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
+                        .font(.system(size: 14))
+                        .foregroundColor(isDarkMode ? .gray.opacity(0.7) : .gray)
                 }
             }
-            .padding()
-            .background(isDarkMode ? Color.black.opacity(0.2) : Color.gray.opacity(0.1))
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isDarkMode 
+                          ? Color.black.opacity(0.3) 
+                          : Color.white.opacity(0.7))
+                    .shadow(color: Color.black.opacity(isDarkMode ? 0.2 : 0.1), 
+                            radius: 2, x: 0, y: 1)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(
+                        role == .destructive 
+                        ? Color.red.opacity(0.3) 
+                        : (isDarkMode ? Color.gray.opacity(0.2) : Color.gray.opacity(0.1)),
+                        lineWidth: 1
+                    )
+            )
             .foregroundColor(role == .destructive ? .red : (isDarkMode ? .white : .black))
-            .cornerRadius(10)
         }
+        .buttonStyle(PlainButtonStyle()) // Elimina la animación predeterminada
+        .contentShape(Rectangle()) // Mejora el área táctil
     }
 }
 

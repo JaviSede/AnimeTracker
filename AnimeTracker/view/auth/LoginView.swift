@@ -14,13 +14,16 @@ struct LoginView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var showingRegistration = false
+    @AppStorage("isDarkMode") private var isDarkMode = true
     
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo con gradiente
+                // Fondo con gradiente adaptado al modo claro/oscuro
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.black, Color(red: 0.1, green: 0.0, blue: 0.2)]),
+                    gradient: Gradient(colors: isDarkMode ? 
+                                      [Color.black, Color(red: 0.1, green: 0.0, blue: 0.2)] : 
+                                      [Color.white, Color(red: 0.9, green: 0.9, blue: 1.0)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -57,12 +60,12 @@ struct LoginView: View {
                         // Título con estilo mejorado
                         Text("AnimeTracker")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(isDarkMode ? .white : .black)
                             .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
                         
                         Text("Seguimiento de tu anime")
                             .font(.system(size: 16, design: .rounded))
-                            .foregroundColor(.gray.opacity(0.8))
+                            .foregroundColor(isDarkMode ? .gray.opacity(0.8) : .gray)
                     }
                     .padding(.top, 20)
                     
@@ -74,12 +77,12 @@ struct LoginView: View {
                                 .frame(width: 30)
                             
                             TextField("Correo electrónico", text: $email)
-                                .foregroundColor(.white)
+                                .foregroundColor(isDarkMode ? .white : .black)
                                 .autocapitalization(.none)
                                 .keyboardType(.emailAddress)
                         }
                         .padding()
-                        .background(Color.white.opacity(0.1))
+                        .background(isDarkMode ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                         .cornerRadius(15)
                         .overlay(
                             RoundedRectangle(cornerRadius: 15)
@@ -92,10 +95,10 @@ struct LoginView: View {
                                 .frame(width: 30)
                             
                             SecureField("Contraseña", text: $password)
-                                .foregroundColor(.white)
+                                .foregroundColor(isDarkMode ? .white : .black)
                         }
                         .padding()
-                        .background(Color.white.opacity(0.1))
+                        .background(isDarkMode ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                         .cornerRadius(15)
                         .overlay(
                             RoundedRectangle(cornerRadius: 15)
@@ -164,7 +167,7 @@ struct LoginView: View {
                         }) {
                             Text("Crear Cuenta")
                                 .font(.system(size: 14, design: .rounded))
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(isDarkMode ? .white.opacity(0.8) : .black.opacity(0.7))
                                 .underline()
                         }
                         
