@@ -93,7 +93,7 @@ struct AnimeStatusSelectionView: View {
                         }
                         .padding(.horizontal)
                         
-                        // Episode counter (only for watching status)
+                        // Episode counter
                         if selectedStatus == .watching {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Episodio Actual")

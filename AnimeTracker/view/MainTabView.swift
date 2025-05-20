@@ -13,8 +13,8 @@ struct MainTabView: View {
     @EnvironmentObject var userLibrary: UserLibrary // Access UserLibrary from environment
     @AppStorage("isDarkMode") private var isDarkMode = true // Access dark mode setting
     
-    @State private var selectedTab = 0 // State for the currently selected tab
-    @State private var showingSettings = false // State to control settings sheet presentation
+    @State private var selectedTab = 0 
+    @State private var showingSettings = false
 
     var body: some View {
         // TabView provides the main navigation structure with tabs at the bottom
@@ -22,7 +22,7 @@ struct MainTabView: View {
             // Home Tab
             NavigationStack {
                 HomeView(showSettings: $showingSettings, switchToProfileTab: {
-                    selectedTab = 3 // Switch to profile tab when requested
+                    selectedTab = 3
                 })
             }
             .tabItem {
@@ -57,14 +57,12 @@ struct MainTabView: View {
             }
             .tag(3)
         }
-        // Present the SettingsView as a sheet when showingSettings is true
+        // Presentar la vista de ajustes si showingSettings es verdadero
         .sheet(isPresented: $showingSettings) {
             SettingsView(isDarkMode: $isDarkMode)
         }
-        // Apply the preferred color scheme based on user settings
+        // Aplicar el modo oscuro o claro según isDarkMode
         .preferredColorScheme(isDarkMode ? .dark : .light)
-        // Set up notification observers and configure TabBar appearance when the view appears
-        // En la función onAppear
         .onAppear {
             // Configurar la apariencia de la barra de pestañas
             let tabBarAppearance = UITabBarAppearance()
@@ -115,9 +113,8 @@ struct MainTabView: View {
         }
     }
     
-    // Function to set up notification observers
     private func setupNotifications() {
-        // Observe notification to switch to the search tab
+        // Observar cambios en la selección de pestañas
         NotificationCenter.default.addObserver(forName: NSNotification.Name("SwitchToSearchTab"), object: nil, queue: .main) { _ in
             selectedTab = 1
         }
@@ -178,7 +175,6 @@ struct MainTabView: View {
                 }
             }
         }
-        // Add other notification observers if needed
     }
 }
 

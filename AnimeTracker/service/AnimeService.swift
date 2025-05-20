@@ -50,7 +50,6 @@ class AnimeService: ObservableObject {
     func fetchRecommendedAnime() {
         isLoading = true
         
-        // For demo purposes, we'll use the upcoming anime as "recommended"
         guard let url = URL(string: "\(baseURL)/seasons/upcoming?limit=10") else {
             return
         }
@@ -78,7 +77,6 @@ class AnimeService: ObservableObject {
         }.resume()
     }
     
-    // For demo purposes, we'll use currently airing anime as "currently watching"
     func fetchCurrentlyWatchingAnime() {
         isLoading = true
         
@@ -166,7 +164,6 @@ class AnimeService: ObservableObject {
         }.resume()
     }
     
-    // Añade este método a tu clase AnimeService
     func searchAnime(query: String, completion: @escaping ([AnimePreview]) -> Void) {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)/anime?q=\(encodedQuery)&limit=20") else {

@@ -13,22 +13,18 @@ final class UserModel {
     @Attribute(.unique) var id: String
     var username: String
     var email: String
-    var password: String // Store hashed password, as done in AuthRepository
+    var password: String // Store hashed password
     var profileImageUrl: String?
     var bio: String?
     var joinDate: Date
 
     // Relationship to AnimeStats (one-to-one)
-    // Cascade delete means if UserModel is deleted, associated AnimeStats is also deleted.
-    // Inverse path updated to point to 'owningUser' in AnimeStats
     @Relationship(deleteRule: .cascade, inverse: \AnimeStats.owningUser)
     var stats: AnimeStats?
 
     // Relationship to SavedAnimeModel (one-to-many)
-    // Cascade delete means if UserModel is deleted, all their SavedAnimeModel entries are also deleted.
-    // Made the array non-optional and updated inverse path.
     @Relationship(deleteRule: .cascade, inverse: \SavedAnimeModel.user)
-    var savedAnimes: [SavedAnimeModel] = [] // Changed to non-optional array
+    var savedAnimes: [SavedAnimeModel] = []
 
     init(id: String = UUID().uuidString,
          username: String,
@@ -37,13 +33,13 @@ final class UserModel {
          profileImageUrl: String? = nil,
          bio: String? = nil,
          joinDate: Date = Date(),
-         stats: AnimeStats? = nil, // Allow initializing with stats
-         savedAnimes: [SavedAnimeModel] = []) // Default to empty array
+         stats: AnimeStats? = nil,
+         savedAnimes: [SavedAnimeModel] = [])
     {
         self.id = id
         self.username = username
         self.email = email
-        self.password = password // Store the hashed password
+        self.password = password
         self.profileImageUrl = profileImageUrl
         self.bio = bio
         self.joinDate = joinDate

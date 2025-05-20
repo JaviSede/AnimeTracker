@@ -368,8 +368,6 @@ struct LibraryView: View {
                     // Sección para editar episodios
                     if anime.status == .watching || anime.status == .onHold {
                         Button(action: {
-                            // Aquí iría un sheet o modal para editar episodios
-                            // Por simplicidad, incrementamos en 1
                             userLibrary.updateAnime(id: anime.id, currentEpisode: anime.currentEpisode + 1)
                         }) {
                             Label("Update Episode", systemImage: "pencil")

@@ -183,64 +183,10 @@ struct SettingsView: View {
     
     private func exportLibraryData() {
         print("Export")
-        /*
-         do {
-         // Obtener los datos de la biblioteca
-         let animes = userLibrary.fetchSavedAnimes()
-         
-         // Convertir a datos JSON
-         let encoder = JSONEncoder()
-         encoder.outputFormatting = .prettyPrinted
-         let jsonData = try encoder.encode(animes)
-         
-         // Crear un archivo temporal
-         let dateFormatter = DateFormatter()
-         dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
-         let dateString = dateFormatter.string(from: Date())
-         let fileName = "AnimeTracker_Export_\(dateString).json"
-         
-         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-         try jsonData.write(to: fileURL)
-         
-         // Guardar la URL para compartir
-         exportURL = fileURL
-         
-         // Mostrar hoja de compartir
-         showingExportSheet = true
-         showingExportSuccessAlert = true
-         } catch {
-         print("Error al exportar datos: \(error.localizedDescription)")
-         }
-         */
     }
     
     private func importLibraryData(from url: URL) {
         print("Import")
-        /*
-         do {
-         // Leer los datos del archivo
-         let jsonData = try Data(contentsOf: url)
-         
-         // Decodificar los datos
-         let decoder = JSONDecoder()
-         let importedAnimes = try decoder.decode([SavedAnimeModel].self, from: jsonData)
-         
-         // Importar a la biblioteca
-         for anime in importedAnimes {
-         /*Check if the anime exists using a different approach
-          if !userLibrary.isInLibrary(id: anime.id) {
-          userLibrary.addSavedAnime(anime: anime)
-          }
-          */
-         print("Anime \(anime.title) imported successfully")
-         }
-         
-         showingImportSuccessAlert = true
-         } catch {
-         importErrorMessage = "No se pudieron importar los datos: \(error.localizedDescription)"
-         showingImportErrorAlert = true
-         }
-         */
     }
     
     
@@ -288,7 +234,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        // Use string-based content types instead of UTType
+
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.json])
         picker.delegate = context.coordinator
         return picker
@@ -335,7 +281,6 @@ struct PrivacyPolicyView: View {
                 Text("AnimeTracker stores all your data locally on your device. We do not collect or store any personal information on our servers. Your anime list, preferences, and settings are stored only on your device.")
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                 
-                // Más contenido de política de privacidad...
             }
             .padding()
         }
@@ -368,8 +313,6 @@ struct TermsOfServiceView: View {
                 
                 Text("AnimeTracker is provided for personal, non-commercial use. You may use the application to track your anime watching progress and manage your anime collection.")
                     .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                // Más contenido de términos de servicio...
             }
             .padding()
         }

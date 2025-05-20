@@ -27,7 +27,6 @@ class UserLibrary: ObservableObject {
     // Method to inject the ModelContext (similar to AuthService)
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
-        // Initial data loading could happen here if needed, but LibraryView will fetch
     }
 
     // Helper to get the current user and their stats object
@@ -38,7 +37,6 @@ class UserLibrary: ObservableObject {
         }
         guard let stats = user.stats else {
             error = "User statistics not found."
-            // Attempt to create stats if missing (shouldn't happen with current register logic)
             if let context = modelContext {
                 let newStats = AnimeStats()
                 user.stats = newStats
@@ -76,7 +74,7 @@ class UserLibrary: ObservableObject {
         error = nil
 
         let newAnime = SavedAnimeModel(
-            id: anime.id,  // Pasar directamente el Int, sin convertir a String
+            id: anime.id,
             title: anime.title,
             imageUrl: anime.images.jpg.image_url,
             status: status,
@@ -134,7 +132,7 @@ class UserLibrary: ObservableObject {
                totalEpisodes > 0 && 
                animeToUpdate.status != .completed {
                 animeToUpdate.status = .completed
-                changed = true // Status changed
+                changed = true
             }
             changed = true
         }

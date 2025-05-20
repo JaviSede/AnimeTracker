@@ -8,31 +8,23 @@ import SwiftUI
 import SwiftData
 import Combine
 
-// Assuming UserModel is defined elsewhere, likely in the Models group
-// If not, this needs to be defined or imported.
-// For now, I'll assume it exists.
-
 class AuthService: ObservableObject {
     // Estado publicado
     @Published var isAuthenticated = false
     @Published var isLoading = false
     @Published var error: String?
-    @Published var currentUser: UserModel? // <-- Added missing property
+    @Published var currentUser: UserModel?
 
     // Dependencias
     private var repository: AuthRepositoryProtocol?
     private var cancellables = Set<AnyCancellable>()
 
-    // Validadores - Assuming these exist and are correctly implemented
+    // Validadores
     private let credentialsValidator = CredentialsValidator()
     private let registrationValidator = RegistrationValidator()
 
 
     init() {}
-
-    // Need to ensure UserModel is available in this scope.
-    // It might require an import or definition.
-    // Let's assume it's available via SwiftData import or similar.
 
     func setModelContext(_ context: ModelContext) {
         self.repository = AuthRepository(modelContext: context)
@@ -169,10 +161,9 @@ class AuthService: ObservableObject {
             } catch {
                 await MainActor.run {
                     print("AuthService: Registration failed - Error: \(error)") // Debug log
-                     // Use localized description from AuthError enum
                     self.error = error.localizedDescription
-                    self.currentUser = nil // Ensure user is nil on error
-                    self.isAuthenticated = false // Should remain false on registration failure
+                    self.currentUser = nil
+                    self.isAuthenticated = false
                     self.isLoading = false
                 }
             }
@@ -181,7 +172,6 @@ class AuthService: ObservableObject {
 
     func logout() {
         guard let repository = repository else {
-            // Maybe set an error if repository is nil?
             print("AuthService: Repository not available for logout.")
             return
         }
@@ -193,10 +183,10 @@ class AuthService: ObservableObject {
             do {
                 try await repository.logout()
                 await MainActor.run {
-                    self.currentUser = nil // Clear current user on logout
+                    self.currentUser = nil
                     self.isAuthenticated = false
                     self.isLoading = false
-                    self.error = nil // Clear error on successful logout
+                    self.error = nil
                     print("AuthService: Logout successful.") // Debug log
                 }
             } catch {
@@ -210,12 +200,7 @@ class AuthService: ObservableObject {
                     }
                     // Keep isLoading false, but indicate the error.
                     self.isLoading = false
-                    // Decide if isAuthenticated should change on logout failure.
-                    // Current logic keeps the user potentially logged in (isAuthenticated might stay true).
-                    // It might be safer to force logout state:
-                    // self.currentUser = nil
-                    // self.isAuthenticated = false
-                    // Let's force logout state for consistency:
+                    // Force logout state for consistency:
                     self.currentUser = nil
                     self.isAuthenticated = false
                     print("AuthService: Forced logout state due to error.") // Debug log
@@ -223,9 +208,6 @@ class AuthService: ObservableObject {
             }
         }
     }
-
-    // Placeholder for other methods if needed
-    // func updateProfile(...) { ... }
     
     func updateProfile(username: String, bio: String, imageData: Data? = nil) async throws {
         guard let repository = repository else {
@@ -250,93 +232,8 @@ class AuthService: ObservableObject {
                 self.error = "Failed to update profile: \(error.localizedDescription)"
                 self.isLoading = false
             }
-            throw error // Re-throw outside the MainActor.run block
+            throw error
         }
     }
 }
-
-// Need definitions for UserModel, Credentials, CredentialsValidator, RegistrationData, RegistrationValidator
-// Assuming they exist in the project structure. For example:
-/*
- struct Credentials {
-     let email: String
-     let password: String
- }
-
- struct RegistrationData {
-     let username: String
-     let email: String
-     let password: String
-     let confirmPassword: String
- }
-
- struct ValidationResult {
-     let isValid: Bool
-     let errors: [Error] // Or specific validation error types
- }
-
- protocol Validator {
-     associatedtype InputType
-     func validate(_ input: InputType) -> ValidationResult
- }
-
- class CredentialsValidator: Validator {
-     typealias InputType = Credentials
-     func validate(_ input: Credentials) -> ValidationResult {
-         // Basic validation logic (e.g., non-empty, email format)
-         var errors: [Error] = []
-         if input.email.isEmpty || !input.email.contains("@") { // Very basic email check
-             errors.append(AuthError.invalidCredentials) // Or a specific validation error
-         }
-         if input.password.isEmpty {
-              errors.append(AuthError.invalidCredentials) // Or a specific validation error
-         }
-         return ValidationResult(isValid: errors.isEmpty, errors: errors)
-     }
- }
-
- class RegistrationValidator: Validator {
-      typealias InputType = RegistrationData
-      func validate(_ input: RegistrationData) -> ValidationResult {
-          // Basic validation logic (e.g., non-empty, email format, password match)
-          var errors: [Error] = []
-          if input.username.isEmpty { errors.append(AuthError.registrationFailed("Username required")) }
-          if input.email.isEmpty || !input.email.contains("@") { errors.append(AuthError.registrationFailed("Invalid email")) }
-          if input.password.isEmpty { errors.append(AuthError.registrationFailed("Password required")) }
-          if input.password != input.confirmPassword { errors.append(AuthError.registrationFailed("Passwords do not match")) }
-          // Add password complexity rules if needed
-          return ValidationResult(isValid: errors.isEmpty, errors: errors)
-      }
- }
- */
-// Also need UserModel definition, likely a SwiftData @Model class.
-/*
- @Model
- final class UserModel {
-     @Attribute(.unique) var id: String
-     var username: String
-     var email: String
-     var password: String // Hashed password
-     // ... other properties like profileImageUrl, bio, joinDate
-     @Relationship(deleteRule: .cascade, inverse: \AnimeStats.user) var stats: AnimeStats?
-
-     init(id: String = UUID().uuidString, username: String, email: String, password: String, /* other params */ stats: AnimeStats? = nil) {
-         self.id = id
-         self.username = username
-         self.email = email
-         self.password = password
-         // ... initialize other properties
-         self.stats = stats
-     }
- }
-
- @Model
- final class AnimeStats {
-     // ... stats properties
-     var user: UserModel? // Inverse relationship
-     init() { /* ... */ }
- }
- */
-
-// AuthError enum should also be accessible, likely defined in AuthRepository.swift or a shared file.
 

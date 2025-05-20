@@ -48,8 +48,6 @@ struct NavigationHome: View {
                         Text("Profile")
                     }
                     .tag(3)
-                    // Remove or replace the environmentObject modifier
-                    // .environmentObject(appState)
             }
             .accentColor(.purple)
             .toolbarBackground(.black, for: .tabBar)
@@ -57,7 +55,6 @@ struct NavigationHome: View {
         }
         // En la parte donde se muestra la hoja de configuración
         .sheet(isPresented: $showingSettings) {
-        //    SettingsView(isDarkMode: $isDarkMode)
         }
         .onAppear {
             animeService.loadAllData()

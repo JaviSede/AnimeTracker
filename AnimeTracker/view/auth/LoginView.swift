@@ -30,7 +30,7 @@ struct LoginView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
-                    // Logo mejorado
+                    // Logo
                     VStack(spacing: 15) {
                         ZStack {
                             // Círculo exterior
@@ -50,14 +50,14 @@ struct LoginView: View {
                                 .fill(Color.white.opacity(0.1))
                                 .frame(width: 100, height: 100)
                             
-                            // Texto "AT" con estilo mejorado
+                            // Texto "AT"
                             Text("AT")
                                 .font(.system(size: 50, weight: .bold, design: .rounded))
                                 .foregroundColor(.white)
                                 .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
                         }
                         
-                        // Título con estilo mejorado
+                        // Título
                         Text("AnimeTracker")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(isDarkMode ? .white : .black)
@@ -69,7 +69,7 @@ struct LoginView: View {
                     }
                     .padding(.top, 20)
                     
-                    // Campos de texto con diseño mejorado
+                    // Campos de texto
                     VStack(spacing: 20) {
                         HStack {
                             Image(systemName: "envelope.fill")
@@ -107,7 +107,7 @@ struct LoginView: View {
                     }
                     .padding(.horizontal, 30)
 
-                    // Botón de inicio de sesión con efecto de sombra
+                    // Botón de inicio de sesión
                     Button(action: {
                         if email.isEmpty || password.isEmpty {
                             alertMessage = "Por favor, introduce correo y contraseña"

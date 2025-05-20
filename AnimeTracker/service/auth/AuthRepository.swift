@@ -91,13 +91,12 @@ class AuthRepository: AuthRepositoryProtocol {
             // Guardar ID de usuario en Keychain
             guard let userIDData = newUser.id.data(using: .utf8) else {
                 // Manejar error si no se puede convertir el ID a Data
-                // Podríamos hacer rollback aquí también si es crítico
                 throw AuthError.keychainError("Failed to encode user ID")
             }
             do {
                 try KeychainManager.save(service: keychainService, account: keychainAccount, password: userIDData)
             } catch KeychainManager.KeychainError.duplicateEntry {
-                // Si ya existe (poco probable en registro, pero por si acaso), intentar actualizar
+                // Si ya existe (poco probable, pero por si acaso), intentar actualizar
                 try KeychainManager.update(service: keychainService, account: keychainAccount, password: userIDData)
             } catch {
                 // Si falla el guardado en Keychain, podríamos hacer rollback de la BD
@@ -112,7 +111,7 @@ class AuthRepository: AuthRepositoryProtocol {
             if !(error is AuthError && String(describing: error).contains("keychainError")) {
                  throw AuthError.registrationFailed(error.localizedDescription)
             } else {
-                // Si fue error de Keychain, ya se lanzó antes
+                // Si fue error de Keychain
                 throw error
             }
         }
@@ -130,7 +129,6 @@ class AuthRepository: AuthRepositoryProtocol {
         
         guard let userID = String(data: userIDData, encoding: .utf8) else {
             // Manejar error si no se puede decodificar el ID
-            // Podríamos intentar borrar la entrada corrupta del Keychain
             try? KeychainManager.delete(service: keychainService, account: keychainAccount)
             throw AuthError.keychainError("Failed to decode user ID from Keychain data")
         }
@@ -198,7 +196,6 @@ class AuthRepository: AuthRepositoryProtocol {
         return String((0..<length).map { _ in characters.randomElement()! })
     }
     
-    // Move the updateProfile method inside the class
     func updateProfile(username: String, bio: String, imageData: Data? = nil) async throws -> UserModel {
         // Get the current user first
         guard let user = try await getCurrentUser() else {
@@ -210,13 +207,8 @@ class AuthRepository: AuthRepositoryProtocol {
         user.bio = bio
         
         // Handle profile image if provided
-        if let imageData = imageData {
-            // Here you would typically:
-            // 1. Upload the image to storage (Firebase, local, etc.)
-            // 2. Get the URL and save it to the user
-            
+        if let imageData = imageData {   
             // For now, let's assume we're just storing the image locally
-            // In a real app, you'd implement proper image storage
             let fileName = "\(user.id)_profile.jpg"
             let fileURL = try await saveImageLocally(imageData: imageData, fileName: fileName)
             user.profileImageUrl = fileURL.absoluteString
@@ -231,7 +223,6 @@ class AuthRepository: AuthRepositoryProtocol {
         }
     }
     
-    // Move the helper method inside the class as well
     private func saveImageLocally(imageData: Data, fileName: String) async throws -> URL {
         // Get the documents directory
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -251,7 +242,7 @@ enum AuthError: Error, LocalizedError {
     case userNotFound
     case hashingFailed
     case invalidPasswordFormat
-    case keychainError(String) // Nuevo caso para errores de Keychain
+    case keychainError(String)
     case notAuthenticated
     case updateFailed(String)
     

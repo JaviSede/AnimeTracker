@@ -16,7 +16,7 @@ struct SearchView: View {
     @State private var selectedAnime: Int? = nil
     
     var body: some View {
-        NavigationStack {  // Añadir NavigationStack aquí
+        NavigationStack {
             ZStack {
                 Color(isDarkMode ? .black : .white)
                     .ignoresSafeArea()
@@ -66,7 +66,7 @@ struct SearchView: View {
                             .foregroundColor(.gray)
                         Spacer()
                     } else if searchResults.isEmpty {
-                        // Show trending or popular anime when no search
+                        // Mostrar anime populares
                         ScrollView {
                             VStack(alignment: .leading, spacing: 20) {
                                 Text("Anime Popular")
@@ -92,7 +92,7 @@ struct SearchView: View {
                             .padding(.bottom, 16)
                         }
                     } else {
-                        // Search results
+                        // Resultados de búsqueda
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
                                 Text("Resultados de Búsqueda")

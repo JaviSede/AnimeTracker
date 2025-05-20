@@ -10,21 +10,20 @@ import SwiftData
 
 @Model
 final class SavedAnimeModel {
-    @Attribute(.unique) var id: Int // ID único para la entrada guardada
-    var animeId: Int // ID from the anime database/API
+    @Attribute(.unique) var id: Int
+    var animeId: Int
     var title: String
     var imageUrl: String?
-    var status: AnimeStatus // e.g., watching, completed, etc.
+    var status: AnimeStatus 
     var currentEpisode: Int
-    var totalEpisodes: Int? // Optional, as some anime might be ongoing
-    var score: Int? // User's score (e.g., 1-10)
+    var totalEpisodes: Int? 
+    var score: Int?
     var dateAdded: Date
     var dateCompleted: Date?
-    var lastUpdated: Date // Añadido para tracking de actualizaciones
-    var notes: String? // Añadido para permitir notas del usuario
+    var lastUpdated: Date
+    var notes: String?
     
     // Relationship back to the user who saved this anime
-    // This is the inverse of the 'savedAnimes' relationship in UserModel
     var user: UserModel?
 
     init(id: Int,
@@ -38,10 +37,10 @@ final class SavedAnimeModel {
          dateCompleted: Date? = nil,
          lastUpdated: Date = Date(),
          notes: String? = nil,
-         user: UserModel? = nil) // Allow associating with a user upon creation
+         user: UserModel? = nil) 
     {
         self.id = id
-        self.animeId = id // Usar el mismo ID como animeId para simplificar
+        self.animeId = id
         self.title = title
         self.imageUrl = imageUrl
         self.status = status

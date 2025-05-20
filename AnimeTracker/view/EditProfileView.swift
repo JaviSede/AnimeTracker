@@ -19,9 +19,9 @@ struct EditProfileView: View {
     @State private var bio: String = ""
     
     // State for photo picker
-    @State private var selectedPhotoItem: PhotosPickerItem? // Item from the picker
-    @State private var selectedImageData: Data? // Raw data of the selected image
-    @State private var profileImageToDisplay: Image? // Image view to display selection/current
+    @State private var selectedPhotoItem: PhotosPickerItem? 
+    @State private var selectedImageData: Data? 
+    @State private var profileImageToDisplay: Image?
     
     // State for loading and errors specific to this view
     @State private var isSaving: Bool = false
@@ -30,7 +30,7 @@ struct EditProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Consistent background
+                // background
                 LinearGradient(gradient: Gradient(colors: [
                     isDarkMode ? Color.purple.opacity(0.3) : Color.purple.opacity(0.1),
                     isDarkMode ? Color.black : Color.white
@@ -48,7 +48,7 @@ struct EditProfileView: View {
                                 .overlay(Circle().stroke(Color.purple.opacity(0.8), lineWidth: 3))
                                 .shadow(color: .purple.opacity(0.5), radius: 5)
                             
-                            // PhotosPicker to select a new image
+                            // PhotosPicker for image selection
                             PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
                                 Text("Cambiar Foto")
                                     .font(.subheadline)
@@ -67,7 +67,6 @@ struct EditProfileView: View {
                                         }
                                     } else {
                                         print("Failed to load image data")
-                                        // Optionally clear selection or show error
                                     }
                                 }
                             }
@@ -200,7 +199,6 @@ struct EditProfileView: View {
         if let user = authService.currentUser {
             username = user.username
             bio = user.bio ?? ""
-            // No need to load image here, profileImageDisplay handles it
         }
     }
     
@@ -249,7 +247,6 @@ struct EditProfileView_Previews: PreviewProvider {
         let mockAuthService = AuthService()
         let mockUser = UserModel(username: "PreviewUser", email: "preview@example.com", password: "password")
         mockUser.bio = "This is a bio for the preview user."
-        // mockUser.profileImageUrl = "https://via.placeholder.com/150" // Example URL
         mockAuthService.currentUser = mockUser
         mockAuthService.isAuthenticated = true
         

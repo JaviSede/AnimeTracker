@@ -32,7 +32,7 @@ struct RegisterView: View {
             
             ScrollView {
                 VStack(spacing: 30) {
-                    // Logo mejorado
+                    // Logo
                     VStack(spacing: 15) {
                         ZStack {
                             // Círculo exterior
@@ -47,19 +47,19 @@ struct RegisterView: View {
                                 .frame(width: 120, height: 120)
                                 .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
                             
-                            // Círculo interior con efecto de brillo
+                            // Círculo interior
                             Circle()
                                 .fill(Color.white.opacity(0.1))
                                 .frame(width: 100, height: 100)
                             
-                            // Texto "AT" con estilo mejorado
+                            // Texto "AT"
                             Text("AT")
                                 .font(.system(size: 50, weight: .bold, design: .rounded))
                                 .foregroundColor(.white)
                                 .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
                         }
                         
-                        // Título con estilo mejorado
+                        // Título
                         Text("Crear Cuenta")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(isDarkMode ? .white : .black)
@@ -67,7 +67,7 @@ struct RegisterView: View {
                     }
                     .padding(.top, 20)
                     
-                    // Campos de texto con diseño mejorado
+                    // Campos de texto
                     VStack(spacing: 20) {
                         HStack {
                             Image(systemName: "person.fill")
@@ -152,7 +152,7 @@ struct RegisterView: View {
                                 .padding(.top, -10)
                         }
                         
-                        // Botón de registro con efecto de sombra
+                        // Botón de registro
                         Button(action: {
                             if password == confirmPassword {
                                 authService.register(username: username, email: email, password: password)

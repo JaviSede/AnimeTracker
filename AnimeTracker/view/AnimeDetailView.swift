@@ -251,7 +251,7 @@ struct AnimeDetailView: View {
             Button(action: {
                 expandSynopsis.toggle()
             }) {
-                Text(expandSynopsis ? "Show Less" : "Read More")
+                Text(expandSynopsis ? "Mostrar Menos" : "Leer Más")
                     .fontWeight(.bold)
                     .foregroundColor(.purple)
             }

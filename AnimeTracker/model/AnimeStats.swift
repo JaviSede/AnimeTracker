@@ -14,8 +14,6 @@ final class AnimeStats {
     var daysWatched: Double = 0.0
 
     // Relationship back to the user
-    // Renamed from 'user' to 'owningUser' to match the inverse relationship in UserModel
-    // and potentially avoid macro expansion conflicts.
     var owningUser: UserModel?
 
     // Default initializer
@@ -54,7 +52,7 @@ final class AnimeStats {
         }
 
         // Calculate days watched (assuming 24 minutes per episode)
-        let totalMinutes = Double(totalEpisodes) * 24.0 // Adjust episode duration if needed
+        let totalMinutes = Double(totalEpisodes) * 24.0
         daysWatched = totalMinutes > 0 ? totalMinutes / (60.0 * 24.0) : 0.0
 
         print("Stats recalculated: Total=\(totalAnime), Watching=\(watching), Completed=\(completed), Plan=\(planToWatch), Hold=\(onHold), Dropped=\(dropped), Episodes=\(totalEpisodes), Days=\(String(format: "%.1f", daysWatched))")

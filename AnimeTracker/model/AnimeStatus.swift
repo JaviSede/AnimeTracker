@@ -16,14 +16,12 @@ enum AnimeStatus: String, Codable, CaseIterable {
     case planToWatch = "Pendiente"
     case onHold = "En Pausa"
     case dropped = "Abandonado"
-    case all = "Todos" // Used for filtering in UI, not for storing in SavedAnimeModel
+    case all = "Todos"
 
-    // Computed property to get the display name
     var displayName: String {
         return self.rawValue
     }
 
-    // Computed property to get an associated color for UI elements
     var color: Color {
         switch self {
         case .watching: return .blue
@@ -31,7 +29,7 @@ enum AnimeStatus: String, Codable, CaseIterable {
         case .planToWatch: return .purple
         case .onHold: return .orange
         case .dropped: return .red
-        case .all: return .gray // Color for the 'All' filter option
+        case .all: return .gray
         }
     }
 }

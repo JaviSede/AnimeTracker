@@ -15,7 +15,7 @@ struct ContentView: View {
     @AppStorage("isDarkMode") private var isDarkMode = true
     
     init() {
-        // Crear primero la instancia de AuthService
+        // Crear la instancia de AuthService
         let auth = AuthService()
         // Luego inicializar los StateObjects
         _authService = StateObject(wrappedValue: auth)
@@ -23,17 +23,16 @@ struct ContentView: View {
     }
     
     var body: some View {
-        // Use a Group to conditionally present views based on authentication
-        NavigationStack {  // Añadir un único NavigationStack aquí
+        NavigationStack {
             Group {
                 if authService.isAuthenticated {
                     // If authenticated, show the main tab view
                     MainTabView()
-                        .navigationBarBackButtonHidden(true)  // Ocultar botón de retroceso
+                        .navigationBarBackButtonHidden(true)
                 } else {
                     // If not authenticated, show the login view
                     LoginView()
-                        .navigationBarBackButtonHidden(true)  // Ocultar botón de retroceso
+                        .navigationBarBackButtonHidden(true)
                 }
             }
         }
@@ -50,7 +49,6 @@ struct ContentView: View {
             switch result {
             case .success(let container):
                 // If successful, set the main context in AuthService
-                // This is crucial for AuthService to interact with the database
                 authService.setModelContext(container.mainContext)
                 // Also set the context for UserLibrary
                 userLibrary.setModelContext(container.mainContext)
@@ -62,8 +60,6 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            // No es necesario observar cambios manualmente ya que @AppStorage
-            // actualizará automáticamente la vista cuando cambie el valor
             print("Dark mode is currently \(isDarkMode ? "enabled" : "disabled")")
         }
                 .onChange(of: isDarkMode) { oldValue, newValue in
@@ -95,7 +91,6 @@ struct ContentView: View {
                             window.addSubview(snapshot)
                             rootVC.view.isHidden = true
                             
-                            // Simular un reinicio de la interfaz
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 rootVC.view.isHidden = false
                                 snapshot.removeFromSuperview()
@@ -110,7 +105,6 @@ struct ContentView: View {
         }
     }
     
-        // Función para actualizar la apariencia de barras y otros elementos de UI
     private func updateAppearance(isDarkMode: Bool) {
         // Configurar la apariencia de la barra de pestañas
         let tabBarAppearance = UITabBarAppearance()

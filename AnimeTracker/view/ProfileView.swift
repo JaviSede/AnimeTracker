@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import SwiftData // Necesario si interactúas directamente con modelos aquí
+import SwiftData
 
 struct ProfileView: View {
     @EnvironmentObject var authService: AuthService
@@ -15,12 +15,10 @@ struct ProfileView: View {
     @State private var showingEditProfile = false
     @State private var showingLoginView = false // Mantener para el estado de desconexión
 
-    // Propiedad calculada para el usuario actual
     private var user: UserModel? {
         authService.currentUser
     }
 
-    // Propiedad calculada para las estadísticas del usuario
     private var stats: AnimeStats? {
         user?.stats
     }
@@ -86,7 +84,7 @@ struct ProfileHeaderView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            // Profile Picture
+            // Imagen de perfil
             Group {
                 if let imageUrl = user.profileImageUrl, let url = URL(string: imageUrl) {
                     AsyncImage(url: url) { phase in
@@ -124,12 +122,12 @@ struct ProfileHeaderView: View {
                     .padding(.horizontal, 40)
             }
 
-            // Join Date
+            // Fecha de unión
             Text("Miembro desde \(user.joinDate, style: .date)")
                 .font(.caption)
                 .foregroundColor(.gray)
         }
-        .padding(.top, 20) // Add padding above the header
+        .padding(.top, 20)
     }
 
     // Placeholder image view
@@ -186,7 +184,7 @@ struct AnimeStatsSectionView: View {
     }
 }
 
-// --- Stat Item View (for the grid) ---
+// --- Stat Item View ---
 struct StatItemView: View {
     let title: String
     let value: Int
@@ -204,11 +202,11 @@ struct StatItemView: View {
                 .foregroundColor(isDarkMode ? .gray : .secondary)
                 .multilineTextAlignment(.center)
         }
-        .frame(minWidth: 0, maxWidth: .infinity) // Ensure items fill width
+        .frame(minWidth: 0, maxWidth: .infinity) // Asegurar que ocupe todo el ancho disponible
     }
 }
 
-// --- Stat Summary View (for Episodes/Days) ---
+// --- Stat Summary View  ---
 struct StatSummaryView: View {
     let title: String
     let value: String
@@ -274,7 +272,7 @@ struct ProfileOptionsSectionView: View {
             Button("Cancelar", role: .cancel) { }
             Button("Exportar") {
                 // Aquí iría la lógica de exportación
-                // Por ahora solo mostramos un mensaje de éxito
+                // Por ahora solo muestro un mensaje de éxito
                 print("Exportando datos...")
             }
         } message: {
